@@ -1,18 +1,11 @@
-# phant-manager-http [![Build Status](https://secure.travis-ci.org/sparkfun/phant-manager-http.png?branch=master)](http://travis-ci.org/sparkfun/phant-manager-http)
+# phant-manager-sparkfun
 
-express based manager module for phant
+the fork of ````phant-manager-http```` that is currently hosted at [data.sparkfun.com](http://data.sparkfun.com).
 
-## Getting Started
-Install the module with: `npm install phant-manager-http`
+## Setting up a dev environment
 
-## Documentation
-_(Coming soon)_
-
-## Examples
-_(Coming soon)_
-
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
-
-## License
-Copyright (c) 2014 SparkFun Electronics. Licensed under the GPL v3 license.
+    $ git clone git@github.com:sfe-stash/phant-manager-sparkfun.git
+    $ cd phant-manager-sparkfun
+    $ git remote add upstream git@github.com:sparkfun/phant-manager-http.git
+    $ npm install
+    $ grunt dev

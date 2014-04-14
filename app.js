@@ -1,6 +1,6 @@
 /**
- * phant-manager-http
- * https://github.com/sparkfun/phant-manager-http
+ * phant-manager-sparkfun
+ * https://github.com/sparkfun/phant-manager-sparkfun
  *
  * Copyright (c) 2014 SparkFun Electronics
  * Licensed under the GPL v3 license.
