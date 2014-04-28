@@ -56,7 +56,15 @@ exports.create = function(req, res, next) {
 
   var fields = [],
       tags = [],
-      self = this;
+      self = this,
+      err;
+
+  if(req.param('check') !== '') {
+    err = new Error('Bot check failed');
+    err.status = 400;
+    next(err);
+    return;
+  }
 
   if(req.param('tags').trim()) {
     tags = req.param('tags').split(',').map(function(tag) {
@@ -87,7 +95,8 @@ exports.create = function(req, res, next) {
       title: 'stream ' + self.keychain.publicKey(stream.id),
       stream: stream,
       publicKey: self.keychain.publicKey(stream.id),
-      privateKey: self.keychain.privateKey(stream.id)
+      privateKey: self.keychain.privateKey(stream.id),
+      deleteKey: self.keychain.deleteKey(stream.id)
     });
 
   });
@@ -98,7 +107,7 @@ exports.create = function(req, res, next) {
 exports.remove = function(req, res, next) {
 
   var pub = req.param('publicKey'),
-      prv = req.param('private_key'),
+      del = req.param('delete_key'),
       self = this,
       id, err;
 
@@ -111,7 +120,7 @@ exports.remove = function(req, res, next) {
   }
 
   // check for private key
-  if(! prv) {
+  if(! del) {
     err = new Error('forbidden: missing private key');
     err.status = 403;
     next(err);
@@ -119,8 +128,8 @@ exports.remove = function(req, res, next) {
   }
 
   // validate keys
-  if(! this.keychain.validate(pub, prv)) {
-    err = new Error('forbidden: invalid key');
+  if(! this.keychain.validateDeleteKey(pub, del)) {
+    err = new Error('forbidden: invalid delete key');
     err.status = 401;
     next(err);
     return;
