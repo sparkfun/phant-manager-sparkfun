@@ -2,9 +2,38 @@ body { padding-top: 70px; padding-bottom: 50px; }
 
 .table th { .text-center; padding: 5px !important; }
 
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .content {
   .make-sm-column(10);
   .make-sm-column-offset(1);
   .make-md-column(10);
   .make-md-column-offset(1);
+}
+
+.welcome {
+
+  .well;
+
+  h1 {
+    @media (max-width: @screen-xs-max) {
+      font-size: 24px;
+    }
+  }
+
+  a.create {
+
+    .btn;
+    .btn-primary;
+    .btn-lg;
+
+    @media (max-width: @screen-xs-max) {
+      .btn-sm;
+    }
+
+  }
 }
