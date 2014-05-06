@@ -6,7 +6,7 @@ exports.list = function(req, res, next) {
 
   var self = this;
 
-  this.metadata.list(function(err, streams) {
+  this.metadata.listByActivity(function(err, streams) {
 
     if(err) {
       err = new Error('loading the stream list failed.');
@@ -49,7 +49,7 @@ exports.tag = function(req, res, next) {
     });
 
     res.render('streams/list', {
-      title: 'streams for tag ' + tag,
+      title: 'streams tagged: ' + tag,
       streams: streams
     });
 
@@ -106,12 +106,16 @@ exports.create = function(req, res, next) {
     });
   }
 
+
   this.metadata.create({
     title: req.param('title'),
     description: req.param('description'),
     fields: fields,
-    tags: tags
+    tags: tags,
+    hidden: (req.param('hidden') === '1' ? true : false)
   }, function(err, stream) {
+
+    console.log(stream);
 
     if(err) {
       err = new Error('creating stream failed');
