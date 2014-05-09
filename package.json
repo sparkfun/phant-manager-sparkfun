@@ -1,6 +1,6 @@
 {
   "name": "phant-manager-sparkfun",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "main": "index.js",
   "private": true,
   "description": "express web based manager for phant",
@@ -48,6 +48,7 @@
     "phant-keychain-hex": "^0.2.1",
     "phant-meta-test": "^1.2.0",
     "grunt-shell": "^0.6.4",
-    "grunt-concurrent": "^0.5.0"
+    "grunt-concurrent": "^0.5.0",
+    "phant-notify-email": "^0.3.0"
   }
 }
