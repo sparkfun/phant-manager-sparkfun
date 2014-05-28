@@ -10,10 +10,10 @@
 var express = require('express'),
     path = require('path'),
     util = require('util'),
+    url = require('url'),
     events = require('events'),
     favicon = require('static-favicon'),
     logger = require('morgan'),
-    methodOverride = require('method-override'),
     bodyParser = require('body-parser'),
     exphbs = require('express3-handlebars');
 
@@ -91,12 +91,17 @@ app.expressInit = function() {
   exp.use(express.compress());
   exp.use(bodyParser.json());
   exp.use(bodyParser.urlencoded());
-  exp.use(methodOverride());
 
   exp.use(function (req, res, next) {
+
     res.header('X-Powered-By', 'phant');
-    res.locals.server = req.protocol + '://' + req.get('host');
+
+    res.locals.url = url.parse(req.url);
+    res.locals.url.protocol = req.protocol;
+    res.locals.url.host = req.get('host');
+
     next();
+
   });
 
   if(exp.get('env') === 'development') {
