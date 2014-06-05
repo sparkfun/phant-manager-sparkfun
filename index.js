@@ -8,21 +8,20 @@
 
 /**** Module dependencies ****/
 var express = require('express'),
-    path = require('path'),
-    util = require('util'),
-    url = require('url'),
-    events = require('events'),
-    favicon = require('static-favicon'),
-    logger = require('morgan'),
-    bodyParser = require('body-parser'),
-    exphbs = require('express3-handlebars');
+  path = require('path'),
+  util = require('util'),
+  url = require('url'),
+  events = require('events'),
+  favicon = require('static-favicon'),
+  bodyParser = require('body-parser'),
+  exphbs = require('express3-handlebars');
 
 /**** helpers ****/
 var handlebars = require('./helpers/handlebars');
 
 /**** routes ****/
 var index = require('./routes'),
-    stream = require('./routes/stream');
+  stream = require('./routes/stream');
 
 var app = {};
 
@@ -37,16 +36,22 @@ function PhantManager(config) {
   // create a responder
   var responder = function(req, res) {
 
-    if(res.headerSent) {
-      return function(req, res) { return; };
+    if (res.headersSent) {
+      return function(req, res) {
+        return;
+      };
     }
 
-    if(req.url.match(/^\/input\//)) {
-      return function(req, res) { return; };
+    if (req.url.match(/^\/input\//)) {
+      return function(req, res) {
+        return;
+      };
     }
 
-    if(req.url.match(/^\/output\//)) {
-      return function(req, res) { return; };
+    if (req.url.match(/^\/output\//)) {
+      return function(req, res) {
+        return;
+      };
     }
 
     return responder.express.call(this, req, res);
@@ -74,7 +79,7 @@ app.expressInit = function() {
 
   exp.engine('handlebars', exphbs({
     layoutsDir: path.join(__dirname, 'views', 'layouts'),
-    partialsDir:  path.join(__dirname,'views', 'partials'),
+    partialsDir: path.join(__dirname, 'views', 'partials'),
     defaultLayout: 'main',
     helpers: handlebars
   }));
@@ -84,16 +89,18 @@ app.expressInit = function() {
 
   exp.use(
     favicon(
-      path.join(__dirname, 'public', 'img', 'favicon.ico'),
-      { maxAge: 2592000000 } // 1 month
+      path.join(__dirname, 'public', 'img', 'favicon.ico'), {
+        maxAge: 2592000000
+      } // 1 month
     )
   );
 
   exp.use(express.compress());
   exp.use(bodyParser.json());
   exp.use(bodyParser.urlencoded());
+  exp.use(this.responseType);
 
-  exp.use(function (req, res, next) {
+  exp.use(function(req, res, next) {
 
     res.header('X-Powered-By', 'phant');
 
@@ -105,9 +112,9 @@ app.expressInit = function() {
 
   });
 
-  if(exp.get('env') === 'development') {
+  if (exp.get('env') === 'development') {
 
-    exp.use(logger('dev'));
+    exp.use(require('morgan')('dev'));
 
     exp.use(express.static(
       path.join(__dirname, 'public')
@@ -118,8 +125,9 @@ app.expressInit = function() {
     exp.enable('view cache');
 
     exp.use(express.static(
-      path.join(__dirname, 'public'),
-      { maxAge: 604800000 }
+      path.join(__dirname, 'public'), {
+        maxAge: 604800000
+      }
     ));
 
   }
@@ -138,38 +146,70 @@ app.expressInit = function() {
 
     var status = err.status || 200;
 
-    res.status(status).render('error', {
-      message: err.message,
-      error: {}
+    res.format({
+      html: function() {
+        res.status(status).render('error', {
+          message: err.message,
+          error: {}
+        });
+      },
+      json: function() {
+        res.json(status, {
+          success: (status === 200 ? true : false),
+          message: err.message
+        });
+      }
     });
 
   });
 
+  exp.post('/streams.:ext', stream.create.bind(this));
   exp.post('/streams', stream.create.bind(this));
-  exp.get('/', index.home);
-  exp.get('/streams/make', stream.make);
+  exp.post('/streams/notify.:ext', stream.notify.bind(this));
   exp.post('/streams/notify', stream.notify.bind(this));
 
-  exp.get('/streams/:publicKey/delete/:deleteKey', stream.remove.bind(this));
+  exp.delete('/streams/:publicKey/delete/:deleteKey.:ext', stream.remove.bind(this));
   exp.delete('/streams/:publicKey/delete/:deleteKey', stream.remove.bind(this));
+  exp.delete('/streams/:publicKey/delete.:ext', stream.remove.bind(this));
   exp.delete('/streams/:publicKey/delete', stream.remove.bind(this));
+
+  exp.get('/', index.home);
+  exp.get('/streams/make', stream.make);
+  exp.get('/streams/:publicKey/delete/:deleteKey.:ext', stream.remove.bind(this));
+  exp.get('/streams/:publicKey/delete/:deleteKey', stream.remove.bind(this));
+  exp.get('/streams/tag/:tag.:ext', stream.tag.bind(this));
   exp.get('/streams/tag/:tag', stream.tag.bind(this));
+  exp.get('/streams/:publicKey.:ext', stream.view.bind(this));
   exp.get('/streams/:publicKey', stream.view.bind(this));
+  exp.get('/streams.:ext', stream.list.bind(this));
   exp.get('/streams', stream.list.bind(this));
 
   return exp;
 
 };
 
+
+app.responseType = function(req, res, next) {
+
+  if (url.parse(req.url).pathname.match(/\.json$/)) {
+    req.headers.accept = 'application/json';
+  } else if (url.parse(req.url).pathname.match(/\.txt$/)) {
+    req.headers.accept = 'text/plain';
+  }
+
+  next();
+
+};
+
 app.touch = function(id) {
 
-  if(! this.metadata) {
+  if (!this.metadata) {
     return;
   }
 
   this.metadata.touch(id, function(err) {
 
-    if(err) {
+    if (err) {
       this.emit('error', err);
     }
 
@@ -187,7 +227,7 @@ app.notify = function(type, options, stream) {
 
     func.call(notify, options, stream, function(err) {
 
-      if(err) {
+      if (err) {
         self.emit('error', 'notify error - ' + err);
       }
 
