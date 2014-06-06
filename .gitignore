@@ -5,3 +5,4 @@ public/js/phant-manager.min.js
 public/third_party
 *.swo
 *.swp
+.DS_Store
