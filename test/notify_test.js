@@ -3,16 +3,14 @@
 var spawn = require('child_process').spawn,
   path = require('path'),
   request = require('request'),
+  Keychain = require('phant-keychain-hex'),
   server;
 
-var test_stream = {
-  title: 'create test',
-  description: 'testing manager creation',
-  fields: 'test1, test2',
-  tags: 'create',
-  hidden: '0',
-  check: ''
-};
+
+var keys = Keychain({
+  publicSalt: process.env.PHANT_PUBLIC_SALT || 'public salt',
+  privateSalt: process.env.PHANT_PRIVATE_SALT || 'private salt'
+});
 
 exports.start = function(test) {
 
@@ -34,9 +32,13 @@ exports.create = {
     test.expect(4);
 
     var options = {
-      url: 'http://localhost:8080/streams',
+      url: 'http://localhost:8080/streams/' + keys.publicKey('111aaa') + '/notify/create',
       method: 'POST',
-      form: test_stream
+      form: {
+        privateKey: keys.privateKey('111aaa'),
+        to: 'todd@sparkfun.com',
+        name: 'Todd'
+      }
     };
 
     request(options, function(err, res, body) {
@@ -44,7 +46,7 @@ exports.create = {
       test.ok(!err, 'should not error');
       test.ok(/^text\/html/.test(res.headers['content-type']), 'content type should be text/html');
       test.equal(res.statusCode, 200, 'status should be 200');
-      test.ok(/New Stream:/.test(body), 'should return a created message');
+      test.ok(/Sent notification/.test(body), 'should return a success message');
 
       test.done();
 
@@ -57,9 +59,15 @@ exports.create = {
     test.expect(4);
 
     var options = {
-      url: 'http://localhost:8080/streams.json',
+      url: 'http://localhost:8080/streams/' + keys.publicKey('111aaa') + '/notify/create.json',
       method: 'POST',
-      form: test_stream
+      headers: {
+        'Phant-Private-Key': keys.privateKey('111aaa')
+      },
+      form: {
+        to: 'todd@sparkfun.com',
+        name: 'Todd'
+      }
     };
 
     request(options, function(err, res, body) {
@@ -69,13 +77,15 @@ exports.create = {
       test.ok(!err, 'should not error');
       test.ok(/^application\/json/.test(res.headers['content-type']), 'content type should be application/json');
       test.equal(res.statusCode, 200, 'status should be 200');
-      test.ok(body.success, 'should report success');
+      test.ok(body.success, 'should return a success message');
 
       test.done();
 
     });
 
-  },
+  }
+
+
 };
 
 exports.cleanup = function(test) {
