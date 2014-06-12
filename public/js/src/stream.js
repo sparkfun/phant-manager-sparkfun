@@ -97,6 +97,55 @@
 
   };
 
+  stream.startSocketIo = function(el) {
+
+    var socket = io(),
+        body = el.find('table tbody');
+
+    socket.on('connect', function() {
+      socket.emit('room', el.data('key'));
+    });
+
+    socket.on('data', function(data) {
+
+      var keys = Object.keys(data).sort(),
+          rec = [];
+
+      // loop through sorted keys, and
+      // push sorted values to new array
+      keys.forEach(function(k) {
+        rec.push(data[k]);
+      });
+
+      body.prepend(templates.row({records: [rec]}));
+
+      stream.highlight(body.find('tr').first());
+
+    });
+
+    socket.on('clear', function() {
+      body.html('');
+    });
+
+  };
+
+  stream.highlight = function(el) {
+
+    var mask = $('<div/>').css({
+      position: 'absolute',
+      width: el.outerWidth(),
+      height: el.outerHeight() + 2,
+      top: el.offset().top - 2,
+      left: el.offset().left,
+      backgroundColor: '#ffff00',
+      opacity: 0.4,
+      zIndex: 3000
+    }).appendTo('body');
+
+    mask.fadeIn('fast').delay(100).fadeOut('slow');
+
+  };
+
   $.fn.stream = function() {
 
     var promises = stream.loadTemplates(this),
@@ -105,6 +154,7 @@
     $.when.apply(this, promises).done(function() {
       stream.loadData(el);
       stream.loadStats(el);
+      stream.startSocketIo(el);
     });
 
     this.find('ul.pager li').click(function(e) {
