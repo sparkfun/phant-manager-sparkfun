@@ -152,8 +152,8 @@
         el = this;
 
     $.when.apply(this, promises).done(function() {
-      stream.loadData(el);
       stream.loadStats(el);
+      stream.loadData(el);
       //stream.startSocketIo(el);
     });
 
