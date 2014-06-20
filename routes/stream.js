@@ -1,6 +1,6 @@
 exports.make = function(req, res) {
   res.render('streams/make', {
-    title: 'New Stream'
+    title: 'New Data Stream'
   });
 };
 
@@ -25,7 +25,7 @@ exports.list = function(req, res, next) {
     res.format({
       html: function() {
         res.render('streams/list', {
-          title: 'Public Streams',
+          title: 'Public Data Streams',
           streams: streams,
           page: page,
           per_page: per_page
@@ -65,7 +65,7 @@ exports.tag = function(req, res, next) {
     res.format({
       html: function() {
         res.render('streams/list', {
-          title: 'Streams Tagged: ' + tag,
+          title: 'Data Streams Tagged: ' + tag,
           streams: streams,
           page: page,
           per_page: per_page
