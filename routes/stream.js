@@ -1,6 +1,7 @@
 exports.make = function(req, res) {
   res.render('streams/make', {
-    title: 'New Data Stream'
+    title: 'New Stream',
+    post: req.body
   });
 };
 
