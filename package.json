@@ -34,7 +34,7 @@
     "static-favicon": "^1.0.0"
   },
   "engines": {
-    "node": "^0.10.28"
+    "node": "^0.10.29"
   },
   "devDependencies": {
     "grunt": "^0.4.4",
