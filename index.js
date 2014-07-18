@@ -21,7 +21,7 @@ var handlebars = require('./helpers/handlebars');
 
 /**** routes ****/
 var index = require('./routes'),
-  stream = require('./routes/stream');
+    stream = require('./routes/stream');
 
 var app = {};
 
@@ -178,6 +178,7 @@ app.expressInit = function() {
   exp.delete('/streams/:publicKey', stream.remove.bind(this));
 
   exp.get('/', index.home);
+  exp.get('/config', index.config);
   exp.get('/streams/make', stream.make);
   exp.get('/streams/delete', stream.delete);
   exp.get('/streams/clear', stream.clear);
