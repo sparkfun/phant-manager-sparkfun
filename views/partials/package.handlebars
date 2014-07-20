@@ -1,0 +1,15 @@
+{
+  "name": "phant-config-{{name}}",
+  "version": "1.0.0",
+  "description": "{{description}}",
+  "main": "index.js",
+  "dependencies": {
+    {{#each package}}
+      "{{@index}}": "^{{this}}"{{#unless @last}},{{/unless}}
+    {{/each}}
+  },
+  "keywords": [
+    "phant"
+  ],
+  "license": "GPL-3.0"
+}

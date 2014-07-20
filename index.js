@@ -21,7 +21,7 @@ var handlebars = require('./helpers/handlebars');
 
 /**** routes ****/
 var index = require('./routes'),
-    stream = require('./routes/stream');
+  stream = require('./routes/stream');
 
 var app = {};
 
@@ -169,6 +169,7 @@ app.expressInit = function() {
 
   });
 
+  exp.post('/config', index.createPackage);
   exp.post('/streams.:ext', stream.create.bind(this));
   exp.post('/streams', stream.create.bind(this));
   exp.post('/streams/:publicKey/notify/:type.:ext', stream.notify.bind(this));
