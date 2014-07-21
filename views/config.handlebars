@@ -4,39 +4,29 @@
 
     <h1>Phant Server Configurator</h1>
 
-    <form role="form" action="/config" method="POST">
+    <form id="config" role="form" data-packages="{{packages}}" action="/config" method="POST">
 
       <div class="form-group">
         <label>Input</label>
         <select name="input" class="form-control">
-          <option>phant-input-http</option>
-          {{#each input}}
-            <option>{{this.name}}</option>
-          {{/each}}
         </select>
       </div>
 
       <div class="form-group">
         <label>Outputs</label>
         <select name="output" class="form-control">
-          <option>phant-output-http</option>
-          {{#each output}}
-            <option>{{this.name}}</option>
-          {{/each}}
         </select>
       </div>
 
       <div class="form-group">
         <label>Managers</label>
         <select name="manager" class="form-control">
-          <option>phant-manager-telnet</option>
-          {{#each manager}}
-            <option>{{this.name}}</option>
-          {{/each}}
         </select>
       </div>
 
       <button type="submit" class="btn btn-primary">Create!</button>
+
+      <script src="/partials/config/option.hbs" type="text/x-handlebars-template"></script>
 
     </form>
 
@@ -44,3 +34,8 @@
 
 </div>
 
+<script>
+  $(document).ready(function() {
+    $('#config').configurator();
+  });
+</script>

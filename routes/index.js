@@ -1,12 +1,14 @@
 var npmSearch = require('npm-package-search'),
   npm = require('npm'),
   fs = require('fs'),
+  async = require('async'),
+  request = require('request'),
   path = require('path');
 
 var search = npmSearch(
   path.join('/tmp/npm.json'), {
     interval: 600 * 1000
-  } // 10 mins
+  }
 );
 
 npm.load();
@@ -17,43 +19,41 @@ exports.home = function(req, res) {
 
 exports.config = function(req, res) {
 
-  search(/^phant-/, function(err, packages) {
+  var get = function(name) {
 
-    var response = {
-      title: 'phant server configurator',
-      input: [],
-      manager: [],
-      meta: [],
-      stream: [],
-      output: []
+    return function(cb) {
+
+      request.get('https://registry.npmjs.org/' + name + '/latest', function(err, response, body) {
+
+        if (err) {
+          return cb(err);
+        }
+
+        cb(null, JSON.parse(body));
+
+      });
+
     };
 
+  };
+
+  search(/^phant-/, function(err, packages) {
+
+    var info = {};
+
     packages.forEach(function(p) {
-
-      if (/^phant-input/.test(p.name)) {
-        response.input.push(p);
-      }
-
-      if (/^phant-output/.test(p.name)) {
-        response.output.push(p);
-      }
-
-      if (/^phant-stream/.test(p.name)) {
-        response.output.push(p);
-        response.stream.push(p);
-      }
-
-      if (/^phant-meta/.test(p.name)) {
-        response.meta.push(p);
-      }
-
-      if (/^phant-manager/.test(p.name)) {
-        response.manager.push(p);
-      }
-
+      info[p.name] = get(p.name);
     });
 
-    res.render('config', response);
+    async.parallel(info, function(err, results) {
+
+      res.render('config', {
+        title: 'phant server configurator',
+        err: err,
+        packages: JSON.stringify(results)
+      });
+
+    });
 
   });
 
@@ -61,15 +61,8 @@ exports.config = function(req, res) {
 
 exports.createPackage = function(req, res) {
 
-  npm.commands.view([req.param('output')], console.log);
-
   res.render('config', {
-      title: 'phant server configurator',
-      input: [],
-      manager: [],
-      meta: [],
-      stream: [],
-      output: []
-    });
+    title: 'phant server configurator'
+  });
 
 };
