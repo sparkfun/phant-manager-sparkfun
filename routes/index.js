@@ -41,6 +41,10 @@ exports.config = function(req, res) {
 
     var info = {};
 
+    if(err) {
+      console.log(err);
+    }
+
     packages.forEach(function(p) {
       info[p.name] = get(p.name);
     });

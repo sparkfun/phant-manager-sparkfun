@@ -180,6 +180,14 @@
 
   };
 
+  config.changeOption = function(e) {
+
+    var selected = $(this).children(':selected');
+
+    $(this).after(JSON.stringify(selected.data('package')));
+
+  };
+
   $.fn.configurator = function() {
 
     var promises = config.loadTemplates(this),
@@ -188,6 +196,10 @@
     $.when.apply(this, promises).done(function() {
       config.renderForm(el);
     });
+
+    el.find('select[name=input]').change(config.changeOption);
+    el.find('select[name=output]').change(config.changeOption);
+    el.find('select[name=manager]').change(config.changeOption);
 
   };
 
