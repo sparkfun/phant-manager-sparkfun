@@ -24,39 +24,25 @@
 
   config.renderForm = function(el) {
 
-    var input = el.find('.input ul.dropdown-menu'),
-        output = el.find('.output ul.dropdown-menu'),
-        manager = el.find('.manager ul.dropdown-menu'),
-        def;
+    var types = ['input', 'output', 'meta', 'manager', 'keychain'];
 
     $.each(el.data('packages'), function(i, p) {
 
-      var option;
+      var type = p.name.split('-')[1],
+          option;
 
       if(! p.phantConfig) {
         return;
       }
 
-      if(/^phant-input/.test(p.name)) {
-        option = $(templates.option(p));
-        option.data('type', 'input');
-        option.data('package', p);
-        return input.append(option);
+      if(types.indexOf(type) === -1) {
+        return;
       }
 
-      if(/^phant-output/.test(p.name)) {
-        option = $(templates.option(p));
-        option.data('type', 'output');
-        option.data('package', p);
-        return output.append(option);
-      }
-
-      if(/^phant-manager/.test(p.name)) {
-        option = $(templates.option(p));
-        option.data('type', 'manager');
-        option.data('package', p);
-        return manager.append(option);
-      }
+      option = $(templates.option(p));
+      option.data('type', type);
+      option.data('package', p);
+      el.find('.' + type + ' ul.dropdown-menu').append(option);
 
     });
 
@@ -71,12 +57,12 @@
 
     $.each(selected.data('package').phantConfig.options, function(i, opt) {
 
-      if(opt.type === 'select') {
+      if(opt.require === '') {
         return;
       }
-      console.log(opt);
 
       config += templates.input(opt);
+
     });
 
     if(selected.data('type') === 'input') {
@@ -123,6 +109,10 @@
     el.find('.input ul.dropdown-menu').on('click', 'li', config.changeOption);
     el.find('.output ul.dropdown-menu').on('click', 'li', config.changeOption);
     el.find('.manager ul.dropdown-menu').on('click', 'li', config.changeOption);
+
+    el.on('click', '.panel button.close', function(e) {
+      $(this).closest('.panel').remove();
+    });
 
   };
 
