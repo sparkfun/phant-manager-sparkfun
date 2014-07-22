@@ -137,17 +137,20 @@
 
     // default input
     def = $(templates.option(defaults.input));
-    def.data('package', {http: true, included: 'HttpInput'});
+    def.data('type', 'input');
+    def.data('package', defaults.input);
     input.append(def);
 
     // default output
     def = $(templates.option(defaults.output));
-    def.data('package', {http: true, included: 'HttpOutput'});
+    def.data('type', 'output');
+    def.data('package', defaults.output);
     output.append(def);
 
     // default manager
     def = $(templates.option(defaults.manager));
-    def.data('package', {included: 'TelnetManager'});
+    def.data('type', 'manager');
+    def.data('package', defaults.manager);
     manager.append(def);
 
     $.each(el.data('packages'), function(i, p) {
@@ -160,18 +163,21 @@
 
       if(/^phant-input/.test(p.name)) {
         option = $(templates.option(p));
+        option.data('type', 'input');
         option.data('package', p);
         return input.append(option);
       }
 
       if(/^phant-output/.test(p.name)) {
         option = $(templates.option(p));
+        option.data('type', 'output');
         option.data('package', p);
         return output.append(option);
       }
 
       if(/^phant-manager/.test(p.name)) {
         option = $(templates.option(p));
+        option.data('type', 'manager');
         option.data('package', p);
         return manager.append(option);
       }
@@ -182,9 +188,39 @@
 
   config.changeOption = function(e) {
 
-    var selected = $(this).children(':selected');
+    var selected = $(this);
 
-    $(this).after(JSON.stringify(selected.data('package')));
+    e.preventDefault();
+
+    if(selected.data('type') === 'input') {
+
+      $('.inputs').append(templates.container({
+        class: 'primary',
+        name: 'Input - ' + selected.data('package').phantConfig.name,
+        config: JSON.stringify(selected.data('package'))
+      }));
+
+    }
+
+    if(selected.data('type') === 'output') {
+
+      $('.outputs').append(templates.container({
+        class: 'success',
+        name: 'Output - ' + selected.data('package').phantConfig.name,
+        config: JSON.stringify(selected.data('package'))
+      }));
+
+    }
+
+    if(selected.data('type') === 'manager') {
+
+      $('.managers').append(templates.container({
+        class: 'info',
+        name: 'Manager - ' + selected.data('package').phantConfig.name,
+        config: JSON.stringify(selected.data('package'))
+      }));
+
+    }
 
   };
 
@@ -197,9 +233,9 @@
       config.renderForm(el);
     });
 
-    el.find('select[name=input]').change(config.changeOption);
-    el.find('select[name=output]').change(config.changeOption);
-    el.find('select[name=manager]').change(config.changeOption);
+    el.find('.input ul.dropdown-menu').on('click', 'li', config.changeOption);
+    el.find('.output ul.dropdown-menu').on('click', 'li', config.changeOption);
+    el.find('.manager ul.dropdown-menu').on('click', 'li', config.changeOption);
 
   };
 
