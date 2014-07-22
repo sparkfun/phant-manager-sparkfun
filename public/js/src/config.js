@@ -3,112 +3,6 @@
   var templates = {},
       config = {};
 
-  var defaults = {
-    input: {
-      name: 'phant-input-http',
-      phantConfig: {
-        name: 'HTTP',
-        options: [
-          {
-            "label": "Metadata",
-            "name": "metadata",
-            "default": "phant-meta-nedb",
-            "type": "select",
-            "require": "meta",
-            "description": "The phant metadata module to use"
-          },
-          {
-            "label": "Keychain",
-            "name": "keychain",
-            "default": "phant-keychain-hex",
-            "type": "select",
-            "require": "keychain",
-            "description": "The phant keychain module to use"
-          },
-          {
-            "label": "Validator",
-            "name": "validator",
-            "default": "phant-validator-default",
-            "type": "select",
-            "require": "validator",
-            "description": "The phant validator module to use"
-          }
-        ]
-      }
-    },
-    output: {
-      name: 'phant-output-http',
-      phantConfig: {
-        name: 'HTTP',
-        options: [
-          {
-            "label": "Storage",
-            "name": "strorage",
-            "default": "phant-stream-csv",
-            "type": "select",
-            "require": "stream",
-            "description": "The phant stream storage module to use"
-          },
-          {
-            "label": "Keychain",
-            "name": "keychain",
-            "default": "phant-keychain-hex",
-            "type": "select",
-            "require": "keychain",
-            "description": "The phant keychain module to use"
-          },
-          {
-            "label": "Validator",
-            "name": "validator",
-            "default": "phant-validator-default",
-            "type": "select",
-            "require": "validator",
-            "description": "The phant validator module to use"
-          }
-        ]
-      }
-    },
-    manager: {
-      name: 'phant-manager-telnet',
-      phantConfig: {
-        name: 'Telnet',
-        options: [
-          {
-            "label": "Port",
-            "name": "port",
-            "default": "8081",
-            "type": "number",
-            "description": "The TCP port to listen on."
-          },
-          {
-            "label": "Metadata",
-            "name": "metadata",
-            "default": "phant-meta-nedb",
-            "type": "select",
-            "require": "meta",
-            "description": "The phant metadata module to use"
-          },
-          {
-            "label": "Keychain",
-            "name": "keychain",
-            "default": "phant-keychain-hex",
-            "type": "select",
-            "require": "keychain",
-            "description": "The phant keychain module to use"
-          },
-          {
-            "label": "Validator",
-            "name": "validator",
-            "default": "phant-validator-default",
-            "type": "select",
-            "require": "validator",
-            "description": "The phant validator module to use"
-          }
-        ]
-      }
-    }
-  };
-
   config.loadTemplates = function(el) {
 
     var promises = [];
@@ -134,24 +28,6 @@
         output = el.find('.output ul.dropdown-menu'),
         manager = el.find('.manager ul.dropdown-menu'),
         def;
-
-    // default input
-    def = $(templates.option(defaults.input));
-    def.data('type', 'input');
-    def.data('package', defaults.input);
-    input.append(def);
-
-    // default output
-    def = $(templates.option(defaults.output));
-    def.data('type', 'output');
-    def.data('package', defaults.output);
-    output.append(def);
-
-    // default manager
-    def = $(templates.option(defaults.manager));
-    def.data('type', 'manager');
-    def.data('package', defaults.manager);
-    manager.append(def);
 
     $.each(el.data('packages'), function(i, p) {
 
@@ -188,16 +64,27 @@
 
   config.changeOption = function(e) {
 
-    var selected = $(this);
+    var selected = $(this),
+        config = '';
 
     e.preventDefault();
+
+    $.each(selected.data('package').phantConfig.options, function(i, opt) {
+
+      if(opt.type === 'select') {
+        return;
+      }
+      console.log(opt);
+
+      config += templates.input(opt);
+    });
 
     if(selected.data('type') === 'input') {
 
       $('.inputs').append(templates.container({
         class: 'primary',
         name: 'Input - ' + selected.data('package').phantConfig.name,
-        config: JSON.stringify(selected.data('package'))
+        config: config
       }));
 
     }
@@ -207,7 +94,7 @@
       $('.outputs').append(templates.container({
         class: 'success',
         name: 'Output - ' + selected.data('package').phantConfig.name,
-        config: JSON.stringify(selected.data('package'))
+        config: config
       }));
 
     }
@@ -217,7 +104,7 @@
       $('.managers').append(templates.container({
         class: 'info',
         name: 'Manager - ' + selected.data('package').phantConfig.name,
-        config: JSON.stringify(selected.data('package'))
+        config: config
       }));
 
     }

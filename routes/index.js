@@ -1,6 +1,7 @@
 var npmSearch = require('npm-package-search'),
   npm = require('npm'),
   fs = require('fs'),
+  util = require('util'),
   async = require('async'),
   request = require('request'),
   path = require('path');
@@ -10,6 +11,112 @@ var search = npmSearch(
     interval: 3600 * 1000
   }
 );
+
+var defaults = {
+  'phant-input-http': {
+    name: 'phant-input-http',
+    phantConfig: {
+      name: 'HTTP',
+      options: [
+        {
+          "label": "Metadata",
+          "name": "metadata",
+          "default": "phant-meta-nedb",
+          "type": "select",
+          "require": "meta",
+          "description": "The phant metadata module to use"
+        },
+        {
+          "label": "Keychain",
+          "name": "keychain",
+          "default": "phant-keychain-hex",
+          "type": "select",
+          "require": "keychain",
+          "description": "The phant keychain module to use"
+        },
+        {
+          "label": "Validator",
+          "name": "validator",
+          "default": "phant-validator-default",
+          "type": "select",
+          "require": "validator",
+          "description": "The phant validator module to use"
+        }
+      ]
+    }
+  },
+  'phant-output-http': {
+    name: 'phant-output-http',
+    phantConfig: {
+      name: 'HTTP',
+      options: [
+        {
+          "label": "Storage",
+          "name": "strorage",
+          "default": "phant-stream-csv",
+          "type": "select",
+          "require": "stream",
+          "description": "The phant stream storage module to use"
+        },
+        {
+          "label": "Keychain",
+          "name": "keychain",
+          "default": "phant-keychain-hex",
+          "type": "select",
+          "require": "keychain",
+          "description": "The phant keychain module to use"
+        },
+        {
+          "label": "Validator",
+          "name": "validator",
+          "default": "phant-validator-default",
+          "type": "select",
+          "require": "validator",
+          "description": "The phant validator module to use"
+        }
+      ]
+    }
+  },
+  'phant-manager-telnet': {
+    name: 'phant-manager-telnet',
+    phantConfig: {
+      name: 'Telnet',
+      options: [
+        {
+          "label": "Port",
+          "name": "port",
+          "default": "8081",
+          "type": "number",
+          "description": "The TCP port to listen on."
+        },
+        {
+          "label": "Metadata",
+          "name": "metadata",
+          "default": "phant-meta-nedb",
+          "type": "select",
+          "require": "meta",
+          "description": "The phant metadata module to use"
+        },
+        {
+          "label": "Keychain",
+          "name": "keychain",
+          "default": "phant-keychain-hex",
+          "type": "select",
+          "require": "keychain",
+          "description": "The phant keychain module to use"
+        },
+        {
+          "label": "Validator",
+          "name": "validator",
+          "default": "phant-validator-default",
+          "type": "select",
+          "require": "validator",
+          "description": "The phant validator module to use"
+        }
+      ]
+    }
+  }
+};
 
 npm.load();
 
@@ -54,7 +161,7 @@ exports.config = function(req, res) {
       res.render('config', {
         title: 'phant server configurator',
         err: err,
-        packages: JSON.stringify(results)
+        packages: JSON.stringify(util._extend(defaults,results))
       });
 
     });
