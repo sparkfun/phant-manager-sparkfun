@@ -130,9 +130,9 @@
 
   config.renderForm = function(el) {
 
-    var input = el.find('[name=input]'),
-        output = el.find('[name=output]'),
-        manager = el.find('[name=manager]'),
+    var input = el.find('.input ul.dropdown-menu'),
+        output = el.find('.output ul.dropdown-menu'),
+        manager = el.find('.manager ul.dropdown-menu'),
         def;
 
     // default input

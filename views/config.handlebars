@@ -1,37 +1,52 @@
 <div class="row">
 
-  <div class="col-md-6 col-md-offset-3">
+  <div class="col-md-8 col-md-offset-2">
 
     <h1>Phant Server Configurator</h1>
 
-    <form id="config" role="form" data-packages="{{packages}}" action="/config" method="POST">
+    <p>
+      Welcome to the phant server config utility. I'm sure I'll write something here that
+      will barely explain how to use this thing
+    </p>
 
-      <div class="form-group">
-        <label>Input</label>
-        <select name="input" class="form-control">
-          <option></option>
-        </select>
+    <hr>
+
+    <div id="config" data-packages="{{packages}}">
+
+      <div class="btn-group input">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+         <span class="glyphicon glyphicon-save"></span> &nbsp;Add Input <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+        </ul>
       </div>
 
-      <div class="form-group">
-        <label>Outputs</label>
-        <select name="output" class="form-control" placeholder="Please select an output">
-          <option></option>
-        </select>
+      <div class="btn-group output">
+        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+         <span class="glyphicon glyphicon-open"></span> &nbsp;Add Output <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+        </ul>
       </div>
 
-      <div class="form-group">
-        <label>Managers</label>
-        <select name="manager" class="form-control">
-          <option></option>
-        </select>
+      <div class="btn-group manager">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+         <span class="glyphicon glyphicon-list-alt"></span> &nbsp;Add Manager <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+        </ul>
       </div>
 
-      <button type="submit" class="btn btn-primary">Create!</button>
+      <div class="inputs"></div>
+      <div class="outputs"></div>
+      <div class="managers"></div>
 
+      <script src="/partials/config/select.hbs" type="text/x-handlebars-template"></script>
       <script src="/partials/config/option.hbs" type="text/x-handlebars-template"></script>
+      <script src="/partials/config/input.hbs" type="text/x-handlebars-template"></script>
+      <script src="/partials/config/container.hbs" type="text/x-handlebars-template"></script>
 
-    </form>
+    </div>
 
   </div>
 

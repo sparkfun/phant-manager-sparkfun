@@ -7,7 +7,7 @@ var npmSearch = require('npm-package-search'),
 
 var search = npmSearch(
   path.join('/tmp/npm.json'), {
-    interval: 600 * 1000
+    interval: 3600 * 1000
   }
 );
 
