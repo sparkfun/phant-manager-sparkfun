@@ -33,14 +33,6 @@ var defaults = {
           "type": "select",
           "require": "keychain",
           "description": "The phant keychain module to use"
-        },
-        {
-          "label": "Validator",
-          "name": "validator",
-          "default": "phant-validator-default",
-          "type": "select",
-          "require": "validator",
-          "description": "The phant validator module to use"
         }
       ]
     }
@@ -65,14 +57,6 @@ var defaults = {
           "type": "select",
           "require": "keychain",
           "description": "The phant keychain module to use"
-        },
-        {
-          "label": "Validator",
-          "name": "validator",
-          "default": "phant-validator-default",
-          "type": "select",
-          "require": "validator",
-          "description": "The phant validator module to use"
         }
       ]
     }
@@ -104,14 +88,6 @@ var defaults = {
           "type": "select",
           "require": "keychain",
           "description": "The phant keychain module to use"
-        },
-        {
-          "label": "Validator",
-          "name": "validator",
-          "default": "phant-validator-default",
-          "type": "select",
-          "require": "validator",
-          "description": "The phant validator module to use"
         }
       ]
     }
