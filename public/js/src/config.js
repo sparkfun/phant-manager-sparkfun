@@ -48,52 +48,29 @@
 
   };
 
-  config.changeOption = function(e) {
+  config.selectOption = function(e) {
 
     var selected = $(this),
-        config = '';
+        config = selected.data('package').phantConfig,
+        type = selected.data('type'),
+        form = '';
 
     e.preventDefault();
 
-    $.each(selected.data('package').phantConfig.options, function(i, opt) {
+    $.each(config.options, function(i, opt) {
 
       if(opt.require === '') {
         return;
       }
 
-      config += templates.input(opt);
+      form += templates.input(opt);
 
     });
 
-    if(selected.data('type') === 'input') {
-
-      $('.inputs').append(templates.container({
-        class: 'primary',
-        name: 'Input - ' + selected.data('package').phantConfig.name,
-        config: config
-      }));
-
-    }
-
-    if(selected.data('type') === 'output') {
-
-      $('.outputs').append(templates.container({
-        class: 'success',
-        name: 'Output - ' + selected.data('package').phantConfig.name,
-        config: config
-      }));
-
-    }
-
-    if(selected.data('type') === 'manager') {
-
-      $('.managers').append(templates.container({
-        class: 'info',
-        name: 'Manager - ' + selected.data('package').phantConfig.name,
-        config: config
-      }));
-
-    }
+    $('.' + type + 's').append(templates.container({
+      name: type.charAt(0).toUpperCase() + type.slice(1) + config.name,
+      config: form
+    }));
 
   };
 
@@ -106,9 +83,7 @@
       config.renderForm(el);
     });
 
-    el.find('.input ul.dropdown-menu').on('click', 'li', config.changeOption);
-    el.find('.output ul.dropdown-menu').on('click', 'li', config.changeOption);
-    el.find('.manager ul.dropdown-menu').on('click', 'li', config.changeOption);
+    el.on('click', 'ul.dropdown-menu li', config.selectOption);
 
     el.on('click', '.panel button.close', function(e) {
       $(this).closest('.panel').remove();
