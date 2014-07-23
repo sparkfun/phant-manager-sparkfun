@@ -35,6 +35,10 @@
         return;
       }
 
+      if(type === 'stream') {
+        type = 'output';
+      }
+
       if(types.indexOf(type) === -1) {
         return;
       }
@@ -59,7 +63,8 @@
 
     $.each(config.options, function(i, opt) {
 
-      if(opt.require === '') {
+      if(opt.require ) {
+        form += templates.label(opt);
         return;
       }
 
