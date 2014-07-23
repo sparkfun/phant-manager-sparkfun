@@ -68,7 +68,7 @@
     });
 
     $('.' + type + 's').append(templates.container({
-      name: type.charAt(0).toUpperCase() + type.slice(1) + config.name,
+      name: type.charAt(0).toUpperCase() + type.slice(1) + ' - ' + config.name,
       config: form
     }));
 
