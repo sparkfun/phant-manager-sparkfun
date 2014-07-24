@@ -47,7 +47,7 @@ var defaults = {
           "name": "strorage",
           "default": "phant-stream-csv",
           "type": "select",
-          "require": "stream",
+          "require": "output",
           "description": "The phant stream storage module to use"
         },
         {

@@ -56,10 +56,29 @@
 
     var selected = $(this),
         config = selected.data('package').phantConfig,
-        type = selected.data('type'),
-        form = '';
+        type = selected.data('type');
 
     e.preventDefault();
+
+    $('.' + type + 's').append(this.buildContainer(type, config));
+
+  };
+
+  config.addDefaults = function(el) {
+
+    var packages = el.data('packages');
+
+    $('.inputs').html(this.buildContainer('input', packages['phant-input-http'].phantConfig));
+    $('.outputs').html(this.buildContainer('output', packages['phant-output-http'].phantConfig));
+    $('.managers').html(this.buildContainer('manager', packages['phant-manager-telnet'].phantConfig));
+    $('.metas').html(this.buildContainer('meta', packages['phant-meta-nedb'].phantConfig));
+    $('.keychains').html(this.buildContainer('keychain', packages['phant-keychain-hex'].phantConfig));
+
+  };
+
+  config.buildContainer = function(type, config) {
+
+    var form = '';
 
     $.each(config.options, function(i, opt) {
 
@@ -72,10 +91,10 @@
 
     });
 
-    $('.' + type + 's').append(templates.container({
+    return templates.container({
       name: type.charAt(0).toUpperCase() + type.slice(1) + ' - ' + config.name,
       config: form
-    }));
+    });
 
   };
 
@@ -85,6 +104,7 @@
         el = this;
 
     $.when.apply(this, promises).done(function() {
+      config.addDefaults(el);
       config.renderForm(el);
     });
 
