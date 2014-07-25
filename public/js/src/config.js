@@ -1,7 +1,8 @@
 (function($) {
 
   var templates = {},
-      config = {};
+      config = {}
+      require = { input: false, output: false, meta: true, keychain: true, stream: false, manager: false };
 
   config.loadTemplates = function(el) {
 
@@ -22,9 +23,9 @@
 
   };
 
-  config.renderForm = function(el) {
+  config.fillDropdowns = function(el) {
 
-    var types = ['input', 'output', 'meta', 'manager', 'keychain'];
+    var types = ['input', 'output', 'stream', 'meta', 'manager', 'keychain'];
 
     $.each(el.data('packages'), function(i, p) {
 
@@ -33,10 +34,6 @@
 
       if(! p.phantConfig) {
         return;
-      }
-
-      if(type === 'stream') {
-        type = 'output';
       }
 
       if(types.indexOf(type) === -1) {
@@ -55,12 +52,16 @@
   config.selectOption = function(e) {
 
     var selected = $(this),
-        config = selected.data('package').phantConfig,
+        conf = selected.data('package').phantConfig,
         type = selected.data('type');
 
     e.preventDefault();
 
-    $('.' + type + 's').append(this.buildContainer(type, config));
+    if(type !== 'meta' && type !== 'keychain')  {
+      $('.' + type + 's').append(config.buildContainer(type, conf));
+    } else {
+      $('.' + type + 's').html(config.buildContainer(type, conf));
+    }
 
   };
 
@@ -70,6 +71,7 @@
 
     $('.inputs').html(this.buildContainer('input', packages['phant-input-http'].phantConfig));
     $('.outputs').html(this.buildContainer('output', packages['phant-output-http'].phantConfig));
+    $('.streams').html(this.buildContainer('storage', packages['phant-stream-csv'].phantConfig));
     $('.managers').html(this.buildContainer('manager', packages['phant-manager-telnet'].phantConfig));
     $('.metas').html(this.buildContainer('meta', packages['phant-meta-nedb'].phantConfig));
     $('.keychains').html(this.buildContainer('keychain', packages['phant-keychain-hex'].phantConfig));
@@ -80,9 +82,19 @@
 
     var form = '';
 
+    if(config.http) {
+      form += templates.input({
+        label: 'Port',
+        name: 'http_port',
+        default: '8080',
+        description: 'The TCP port to use for the http server.'
+      });
+    }
+
     $.each(config.options, function(i, opt) {
 
-      if(opt.require ) {
+      if(opt.require) {
+        require[opt.require] = true;
         form += templates.label(opt);
         return;
       }
@@ -98,6 +110,56 @@
 
   };
 
+  config.validate = function(el) {
+
+    if(require.meta) {
+
+      if(el.find('.metas').children().length > 1) {
+        return config.alert('You only need one metadata module. Please remove one.');
+      }
+
+      if(el.find('.metas').children().length < 1) {
+        return config.alert('You must select a metadata module.');
+      }
+
+    }
+
+    if(require.keychain) {
+
+      if(el.find('.keychains').children().length > 1) {
+        return config.alert('You only need one keychain module. Please remove one.');
+      }
+
+      if(el.find('.keychains').children().length < 1) {
+        return config.alert('You must select a keychain module.');
+      }
+
+    }
+
+    if(require.stream) {
+
+      if(el.find('.streams').children().length < 1) {
+        return config.alert('You must select a storage module.');
+      }
+
+    }
+
+    if(require.manager) {
+
+      if(el.find('.managers').children().length < 1) {
+        return config.alert('You must select a manager module.');
+      }
+
+    }
+
+  };
+
+  config.alert = function(message) {
+
+    alert(message);
+
+  }
+
   $.fn.configurator = function() {
 
     var promises = config.loadTemplates(this),
@@ -105,13 +167,29 @@
 
     $.when.apply(this, promises).done(function() {
       config.addDefaults(el);
-      config.renderForm(el);
+      config.fillDropdowns(el);
     });
 
     el.on('click', 'ul.dropdown-menu li', config.selectOption);
 
     el.on('click', '.panel button.close', function(e) {
       $(this).closest('.panel').remove();
+    });
+
+    el.on('click', function(e) {
+      config.validate(el);
+    });
+
+    el.on('keyup', '[name=http_port]', function(e) {
+
+      var port = $(this).val();
+
+      e.preventDefault();
+
+      $('[name=http_port]').each(function() {
+        $(this).val(port);
+      });
+
     });
 
   };

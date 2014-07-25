@@ -17,6 +17,7 @@ var defaults = {
     name: 'phant-input-http',
     phantConfig: {
       name: 'HTTP',
+      http: true,
       options: [
         {
           "label": "Metadata",
@@ -41,13 +42,14 @@ var defaults = {
     name: 'phant-output-http',
     phantConfig: {
       name: 'HTTP',
+      http: true,
       options: [
         {
           "label": "Storage",
           "name": "strorage",
           "default": "phant-stream-csv",
           "type": "select",
-          "require": "output",
+          "require": "stream",
           "description": "The phant stream storage module to use"
         },
         {

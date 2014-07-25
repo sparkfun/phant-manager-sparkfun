@@ -3,6 +3,7 @@
 @meta-color: #4FB99F;
 @manager-color: #F2B134;
 @keychain-color: #ED553B;
+@stream-color: #B20000;
 
 #config {
 
@@ -26,6 +27,10 @@
     .label-variant(@meta-color);
   }
 
+  .label-stream {
+    .label-variant(@stream-color);
+  }
+
   .label-manager {
     .label-variant(@manager-color);
   }
@@ -39,7 +44,7 @@
       .button-variant(#fff; @input-color; @input-color);
     }
     .glyphicon {
-      .glyphicon-save;
+      .glyphicon-circle-arrow-right;
     }
   }
 
@@ -48,7 +53,16 @@
       .button-variant(#fff; @output-color; @output-color);
     }
     .glyphicon {
-      .glyphicon-open;
+      .glyphicon-circle-arrow-left;
+    }
+  }
+
+  .stream {
+    .btn {
+      .button-variant(#fff; @stream-color; @stream-color);
+    }
+    .glyphicon {
+      .glyphicon-save;
     }
   }
 
@@ -85,7 +99,7 @@
 
   .inputs {
     .panel {
-      .glyphicon {.glyphicon-save;}
+      .glyphicon {.glyphicon-circle-arrow-right;}
       .panel-variant(@input-color; #fff; @input-color; @input-color);
       .close {
         color: #fff;
@@ -97,8 +111,20 @@
 
   .outputs {
     .panel {
-      .glyphicon {.glyphicon-open;}
+      .glyphicon {.glyphicon-circle-arrow-left;}
       .panel-variant(@output-color; #fff; @output-color; @output-color);
+      .close {
+        color: #fff;
+        opacity: 0.6;
+        text-shadow: 0 1px 0 #222;
+      }
+    }
+  }
+
+  .streams {
+    .panel {
+      .glyphicon {.glyphicon-list;}
+      .panel-variant(@meta-color; #fff; @stream-color; @stream-color);
       .close {
         color: #fff;
         opacity: 0.6;
