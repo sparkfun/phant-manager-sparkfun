@@ -115,11 +115,11 @@
     if(require.meta) {
 
       if(el.find('.metas').children().length > 1) {
-        return config.alert('You only need one metadata module. Please remove one.');
+        throw 'You only need one metadata module. Please remove one.';
       }
 
       if(el.find('.metas').children().length < 1) {
-        return config.alert('You must select a metadata module.');
+        throw 'You must select a metadata module.';
       }
 
     }
@@ -127,11 +127,11 @@
     if(require.keychain) {
 
       if(el.find('.keychains').children().length > 1) {
-        return config.alert('You only need one keychain module. Please remove one.');
+        throw 'You only need one keychain module. Please remove one.';
       }
 
       if(el.find('.keychains').children().length < 1) {
-        return config.alert('You must select a keychain module.');
+        throw 'You must select a keychain module.';
       }
 
     }
@@ -139,7 +139,7 @@
     if(require.stream) {
 
       if(el.find('.streams').children().length < 1) {
-        return config.alert('You must select a storage module.');
+        throw 'You must select a storage module.';
       }
 
     }
@@ -147,18 +147,25 @@
     if(require.manager) {
 
       if(el.find('.managers').children().length < 1) {
-        return config.alert('You must select a manager module.');
+        throw 'You must select a manager module.';
       }
 
     }
 
+    el.find('.panel input').each(function() {
+
+      var title = $(this).closest('.panel').find('panel-heading').html();
+
+      title += ' - ' + $(this).closest('.form-group').find('label').html();
+
+      if($(this).val().trim() === '') {
+        throw 'Missing: ' + title;
+      }
+
+    });
+
   };
 
-  config.alert = function(message) {
-
-    alert(message);
-
-  }
 
   $.fn.configurator = function() {
 
@@ -176,8 +183,18 @@
       $(this).closest('.panel').remove();
     });
 
-    el.on('click', function(e) {
-      config.validate(el);
+    el.on('click', '.validate',  function(e) {
+
+      e.preventDefault();
+
+      try {
+        config.validate(el);
+        bootbox.alert($(this).data('action'));
+      } catch(err) {
+        bootbox.alert(err);
+        return;
+      }
+
     });
 
     el.on('keyup', '[name=http_port]', function(e) {
