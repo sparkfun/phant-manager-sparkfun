@@ -166,6 +166,59 @@
 
   };
 
+  config.download = function(el) {
+
+    
+
+  };
+
+  config.publish = function(el) {
+
+    bootbox.prompt('Enter the name of your package. It will be published to npm with the prefix of "phantconfig-"', function(result) {
+
+      if(! result) {
+        return;
+      }
+
+      config.message('Checking npm for packages named phantconfig-' + result, true);
+
+      config.checkName(result).then(function(res) {
+        config.message();
+        console.log(res.exists);
+      });
+
+    });
+
+  };
+
+  config.checkName = function(name) {
+
+    return $.get('/config/exists/' + name);
+
+  };
+
+  config.message = function(message, spinner) {
+
+    if(! spinner) {
+      $('.spinner').hide();
+    } else {
+      $('.spinner').show();
+    }
+
+    if(! message) {
+      $('.modules').each(function(){ $(this).show(); });
+      $('.button-container').show();
+      $('.controls').show();
+      $('#message').html('');
+      return;
+    }
+
+    $('#message').html(message);
+    $('.modules').each(function(){ $(this).hide(); });
+    $('.button-container').hide();
+    $('.controls').hide();
+
+  }
 
   $.fn.configurator = function() {
 
@@ -189,7 +242,7 @@
 
       try {
         config.validate(el);
-        bootbox.alert($(this).data('action'));
+        config[$(this).data('action')].call(this, el);
       } catch(err) {
         bootbox.alert(err);
         return;

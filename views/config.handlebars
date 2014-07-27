@@ -65,21 +65,25 @@
 
       </div>
 
-      <div class="inputs">
+      <div class="messages">
         <div class="spinner">
           <div class="bounce1"></div>
           <div class="bounce2"></div>
           <div class="bounce3"></div>
         </div>
+        <div id="message"></div>
       </div>
-      <div class="outputs"></div>
-      <div class="streams"></div>
-      <div class="metas"></div>
-      <div class="keychains"></div>
-      <div class="managers"></div>
+      <div class="inputs modules"></div>
+      <div class="outputs modules"></div>
+      <div class="streams modules"></div>
+      <div class="metas modules"></div>
+      <div class="keychains modules"></div>
+      <div class="managers modules"></div>
 
-      <button class="btn btn-primary validate" data-action="download">Download package</button>
-      <button class="btn btn-info validate" data-action="publish">Publish to npm</button>
+      <div class="controls">
+        <button class="btn btn-primary validate" data-action="download">Download package</button>
+        <button class="btn btn-info validate" data-action="publish">Publish to npm</button>
+      </div>
 
       <script src="/partials/config/label.hbs" type="text/x-handlebars-template"></script>
       <script src="/partials/config/option.hbs" type="text/x-handlebars-template"></script>
