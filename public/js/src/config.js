@@ -52,7 +52,7 @@
   config.selectOption = function(e) {
 
     var selected = $(this),
-        conf = selected.data('package').phantConfig,
+        conf = selected.data('package'),
         type = selected.data('type');
 
     e.preventDefault();
@@ -69,20 +69,22 @@
 
     var packages = el.data('packages');
 
-    $('.inputs').html(this.buildContainer('input', packages['phant-input-http'].phantConfig));
-    $('.outputs').html(this.buildContainer('output', packages['phant-output-http'].phantConfig));
-    $('.streams').html(this.buildContainer('storage', packages['phant-stream-csv'].phantConfig));
-    $('.managers').html(this.buildContainer('manager', packages['phant-manager-telnet'].phantConfig));
-    $('.metas').html(this.buildContainer('meta', packages['phant-meta-nedb'].phantConfig));
-    $('.keychains').html(this.buildContainer('keychain', packages['phant-keychain-hex'].phantConfig));
+    $('.inputs').html(this.buildContainer('input', packages['phant-input-http']));
+    $('.outputs').html(this.buildContainer('output', packages['phant-output-http']));
+    $('.streams').html(this.buildContainer('storage', packages['phant-stream-csv']));
+    $('.managers').html(this.buildContainer('manager', packages['phant-manager-telnet']));
+    $('.metas').html(this.buildContainer('meta', packages['phant-meta-nedb']));
+    $('.keychains').html(this.buildContainer('keychain', packages['phant-keychain-hex']));
+
+    $('.spinner').hide();
 
   };
 
-  config.buildContainer = function(type, config) {
+  config.buildContainer = function(type, package) {
 
     var form = '';
 
-    if(config.http) {
+    if(package.phantConfig.http) {
       form += templates.input({
         label: 'Port',
         name: 'http_port',
@@ -91,7 +93,7 @@
       });
     }
 
-    $.each(config.options, function(i, opt) {
+    $.each(package.phantConfig.options, function(i, opt) {
 
       if(opt.require) {
         require[opt.require] = true;
@@ -103,10 +105,14 @@
 
     });
 
-    return templates.container({
-      name: type.charAt(0).toUpperCase() + type.slice(1) + ' - ' + config.name,
+    var panel = $(templates.container({
+      name: type.charAt(0).toUpperCase() + type.slice(1) + ' - ' + package.phantConfig.name,
       config: form
-    });
+    }));
+
+    panel.data('package', package);
+
+    return panel;
 
   };
 
@@ -167,9 +173,6 @@
   };
 
   config.download = function(el) {
-
-    
-
   };
 
   config.publish = function(el) {
@@ -180,21 +183,71 @@
         return;
       }
 
+      // remove all non alpha numeric characters, and replace spaces with dashes
+      result = result.replace(/\W/g, '').toLowerCase();
+
       config.message('Checking npm for packages named phantconfig-' + result, true);
 
+      // check npm for package name
       config.checkName(result).then(function(res) {
+
+        // clear message
         config.message();
-        console.log(res.exists);
+
+        // prompt again if the module already exists
+        if(res.exists) {
+          bootbox.alert('A module named phantconfig-' + result + ' already exists. Please choose another.', function() {
+            config.publish(el);
+          });
+          return;
+        }
+
+        config.message('Publishing phantconfig-' + result + ' to npm. You will be redirected to the package once publishing is complete.', true);
+
+        // actually publish the package
+        $.post('/config/publish', { config: config.get(el) }, function(res) {
+
+          if(! res.success) {
+            config.message();
+            return bootbox.alert(res.message);
+          }
+
+          window.location = 'https://npmjs.org/package/' + result;
+
+        });
+
       });
 
     });
 
   };
 
+  config.get = function(el) {
+
+    var cnf = [];
+
+    el.find('.panel').each(function() {
+
+      var panel = $(this),
+          package = panel.data('package');
+
+      package.userConfig = {};
+
+      panel.find('input').each(function() {
+        var input = $(this);
+        package.userConfig[input.attr('name')] = input.val();
+      });
+
+      cnf.push(package);
+
+    });
+
+    return cnf;
+
+  };
+
   config.checkName = function(name) {
-
     return $.get('/config/exists/' + name);
-
   };
 
   config.message = function(message, spinner) {
