@@ -303,6 +303,7 @@
 
     });
 
+    // sync http ports between all inputs
     el.on('keyup', '[name=http_port]', function(e) {
 
       var port = $(this).val();

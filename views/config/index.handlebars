@@ -1,0 +1,36 @@
+var Phant = require('phant'),
+    app = Phant();
+
+{{#if http}}
+  Phant.HttpServer.listen(http);
+{{/if}}
+
+var meta = require('{{meta.name}}')({
+  {{#each meta.userConfig}}
+    {{@index}}: '{{this}}'{{#unless @last}},{{/unless}}
+  {{/each}}
+});
+
+var validator = Phant.Validator({
+  metadata: meta
+});
+
+var keychain = require('{{keychain.name}}')({
+  {{#each keychain.userConfig}}
+    {{@index}}: '{{this}}'{{#unless @last}},{{/unless}}
+  {{/each}}
+});
+
+{{#each modules}}
+
+  var {{variableName this.name}} = require('{{this.name}}')({
+    {{#each this.userConfig}}
+      {{@index}}: {{this}}{{#unless @last}},{{/unless}}
+    {{/each}}
+  });
+
+  {{#if this.phantConfig.http}}
+    Phant.HttpServer.use({{variableName this.name}});
+  {{/if}}
+
+{{/each}}
