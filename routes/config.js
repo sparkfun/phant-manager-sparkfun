@@ -224,7 +224,6 @@ function createPackage(name, config, callback) {
       handlebars(path.join(__dirname, '..', 'views', 'config', file.tpl), config, function(err, rendered) {
 
         if(err) {
-          console.log(err);
           return cb('Generating the package failed.');
         }
 
@@ -284,6 +283,5 @@ function setUp(folder, config, callback) {
     });
 
   });
-
 
 }

@@ -246,13 +246,16 @@
 
     el.find('.' + type + ' .panel').each(function() {
 
-      var parsed = config.parsePanel($(this));
+      var parsed = config.parsePanel($(this)),
+          userConfig = parsed.userConfig.slice();
 
-      // set global http port, and clear it from module config
-      if(parsed.userConfig.http_port) {
-        cnf.http = parsed.userConfig.http_port;
-        delete parsed.userConfig.http_port;
-      }
+      $.each(userConfig, function(i, v) {
+        // set global http port, and clear it from module config
+        if(v.name === 'http_port') {
+          cnf.http = v.value;
+          parsed.userConfig.splice(i, 1);
+        }
+      });
 
       modules.push(parsed);
 
