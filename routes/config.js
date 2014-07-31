@@ -1,6 +1,7 @@
 var npmSearch = require('npm-package-search'),
   npm = require('npm'),
   fs = require('fs'),
+  mkdirp = require('mkdirp'),
   util = require('util'),
   async = require('async'),
   request = require('request'),
@@ -13,7 +14,7 @@ var search = npmSearch(
   }
 );
 
-var handlebars = exphbs({
+var handlebars = exphbs.create({
   layoutsDir: path.join(__dirname, '..', 'views', 'layouts'),
   partialsDir: path.join(__dirname, '..', 'views', 'partials'),
   defaultLayout: 'config',
@@ -24,7 +25,7 @@ var handlebars = exphbs({
       });
     }
   }
-});
+}).engine;
 
 var defaults = {
   'phant-input-http': {
@@ -164,14 +165,29 @@ exports.check = function(req, res) {
 
 exports.publishPackage = function(req, res) {
 
-  console.log(typeof req.param('config'));
-  console.log(req.param('config'));
+  var config = JSON.parse(req.param('config')),
+      name = 'phantconfig-' + req.param('name');
 
-  res.render('config', {
-    title: 'phant server configurator'
+  createPackage(name, config, function(err, folder) {
+
+    if(err) {
+      return res.json({
+        success: false
+        message: err
+      });
+    }
+
+    //npm.publish(folder, function(err) {
+
+      res.json({
+        success: (err ? false : true),
+        message: (err ? 'Publishing to npm failed.' : ''),
+        name: name
+      });
+
+    //});
+
   });
-
-
 
 };
 
@@ -182,3 +198,47 @@ exports.downloadPackage = function(req, res) {
   });
 
 };
+
+function createPackage(name, config, callback) {
+
+  var folder = path.join('/tmp', 'phantconfig', name);
+
+  var files = [
+    { tpl: 'index.handlebars', out: 'index.js' },
+    { tpl: 'package.handlebars', out: 'package.json' },
+    { tpl: 'readme.handlebars', out: 'README.md' }
+  ];
+
+  mkdirp(folder, function(err) {
+
+    if(err) {
+      return callback('Temp folder creation failed');
+    }
+
+    async.each(files, function(file, cb) {
+
+      // render the template
+      handlebars(file.tpl, config, function(err, rendered) {
+
+        if(err) {
+          return cb('Generating the package failed.');
+        }
+
+        // write it to disk
+        fs.writeFile(path.join(folder, file.out), rendered, function(err) {
+
+          if(err) {
+            return cb('Writing ' + file.out + ' to disk failed');
+          }
+
+          cb(null, folder);
+
+        });
+
+      });
+
+    }, callback);
+
+  });
+
+}

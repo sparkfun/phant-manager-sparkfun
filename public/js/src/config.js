@@ -206,7 +206,7 @@
         config.message('Publishing phantconfig-' + result + ' to npm. You will be redirected to the package once publishing is complete.', true);
 
         // actually publish the package
-        $.post('/config/publish', { config: config.get(el) }, function(res) {
+        $.post('/config/publish', { name: result, config: config.get(el) }, function(res) {
 
           if(! res.success) {
             config.message();

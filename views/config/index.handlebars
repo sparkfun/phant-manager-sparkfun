@@ -1,36 +1,131 @@
+#!/usr/bin/env node
+
 var Phant = require('phant'),
     app = Phant();
 
-{{#if http}}
-  Phant.HttpServer.listen(http);
-{{/if}}
+{{#if http}}Phant.HttpServer.listen({{http}});
 
+{{/if ~}}
+// METADATA
+// ========
 var meta = require('{{meta.name}}')({
-  {{#each meta.userConfig}}
-    {{@index}}: '{{this}}'{{#unless @last}},{{/unless}}
-  {{/each}}
+{{#each meta.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
 });
 
 var validator = Phant.Validator({
   metadata: meta
 });
 
+// KEYCHAIN
+// ========
 var keychain = require('{{keychain.name}}')({
-  {{#each keychain.userConfig}}
-    {{@index}}: '{{this}}'{{#unless @last}},{{/unless}}
-  {{/each}}
+{{#each keychain.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
 });
 
-{{#each modules}}
+// STORAGE
+// =======
+{{#each streams ~}}
+{{#if @first ~}}
+var stream = require('{{this.name}}')({
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
 
-  var {{variableName this.name}} = require('{{this.name}}')({
-    {{#each this.userConfig}}
-      {{@index}}: {{this}}{{#unless @last}},{{/unless}}
-    {{/each}}
-  });
+app.registerOutput(stream);
 
-  {{#if this.phantConfig.http}}
-    Phant.HttpServer.use({{variableName this.name}});
-  {{/if}}
+{{else ~}}
+var {{variableName this.name}} = require('{{this.name}}')({
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
 
-{{/each}}
+app.registerOutput({{variableName this.name}});
+
+{{/if ~}}
+{{/each ~}}
+
+// INPUTS
+// ======
+{{#each inputs ~}}
+{{#if this.included ~}}
+var defaultInput = {{this.included}}({
+  validator: validator,
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
+
+{{#if this.phantConfig.http}}Phant.HttpServer.use(defaultInput);
+{{/if ~}}
+app.registerInput(defaultInput);
+
+{{else ~}}
+var {{variableName this.name}} = require('{{this.name}}')({
+  validator: validator,
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
+
+{{#if this.phantConfig.http}}Phant.HttpServer.use({{variableName this.name}});
+{{/if ~}}
+app.registerInput({{variableName this.name}});
+
+{{/if ~}}
+{{/each ~}}
+
+// OUTPUTS
+// =======
+{{#each outputs ~}}
+{{#if this.included ~}}
+var defaultOutput = {{this.included}}({
+  validator: validator,
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
+
+{{#if this.phantConfig.http}}Phant.HttpServer.use(defaultOutput);
+{{/if ~}}
+app.registerOutput(defaultOutput);
+
+{{else ~}}
+var {{variableName this.name}} = require('{{this.name}}')({
+  validator: validator,
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
+
+{{#if this.phantConfig.http}}Phant.HttpServer.use({{variableName this.name}});
+{{/if ~}}
+app.registerOutput({{variableName this.name}});
+
+{{/if ~}}
+{{/each ~}}
+
+// MANAGERS
+// ========
+{{#each managers ~}}
+{{#if this.included ~}}
+var defaultManager = {{this.included}}({
+  validator: validator,
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
+
+{{#if this.phantConfig.http}}Phant.HttpServer.use(defaultOutput);
+{{/if ~}}
+app.registerManager(defaultManager);
+
+{{else ~}}
+var {{variableName this.name}} = require('{{this.name}}')({
+  validator: validator,
+{{#each this.userConfig}}  {{@key}}: {{{this}}}{{#unless @last}},{{/unless}}
+{{/each ~}}
+});
+
+{{#if this.phantConfig.http}}Phant.HttpServer.use({{variableName this.name}});
+{{/if ~}}
+app.registerManager{{variableName this.name}});
+
+{{/if ~}}
+{{/each ~}}
