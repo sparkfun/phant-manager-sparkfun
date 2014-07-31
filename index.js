@@ -170,7 +170,7 @@ app.expressInit = function() {
 
   });
 
-  exp.post('/config/package', config.createPackage);
+  exp.post('/config/publish', config.publishPackage);
   exp.post('/config/download', config.downloadPackage);
   exp.post('/streams.:ext', stream.create.bind(this));
   exp.post('/streams', stream.create.bind(this));

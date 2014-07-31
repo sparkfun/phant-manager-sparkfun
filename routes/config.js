@@ -4,6 +4,7 @@ var npmSearch = require('npm-package-search'),
   util = require('util'),
   async = require('async'),
   request = require('request'),
+  exphbs = require('express3-handlebars'),
   path = require('path');
 
 var search = npmSearch(
@@ -12,9 +13,22 @@ var search = npmSearch(
   }
 );
 
+var handlebars = exphbs({
+  layoutsDir: path.join(__dirname, '..', 'views', 'layouts'),
+  partialsDir: path.join(__dirname, '..', 'views', 'partials'),
+  defaultLayout: 'config',
+  helpers: {
+    variableName: function(name) {
+      name = name.split('-').map(function(chunk) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      });
+    }
+  }
+});
+
 var defaults = {
   'phant-input-http': {
-    name: 'phant-input-http',
+    included: 'Phant.HttpInput',
     phantConfig: {
       name: 'HTTP',
       http: true,
@@ -39,7 +53,7 @@ var defaults = {
     }
   },
   'phant-output-http': {
-    name: 'phant-output-http',
+    included: 'Phant.HttpOutput',
     phantConfig: {
       name: 'HTTP',
       http: true,
@@ -64,7 +78,7 @@ var defaults = {
     }
   },
   'phant-manager-telnet': {
-    name: 'phant-manager-telnet',
+    included: 'Phant.TelnetManager',
     phantConfig: {
       name: 'Telnet',
       options: [
@@ -148,11 +162,16 @@ exports.check = function(req, res) {
 
 };
 
-exports.createPackage = function(req, res) {
+exports.publishPackage = function(req, res) {
+
+  console.log(typeof req.param('config'));
+  console.log(req.param('config'));
 
   res.render('config', {
     title: 'phant server configurator'
   });
+
+
 
 };
 

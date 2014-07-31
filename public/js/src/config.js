@@ -86,6 +86,7 @@
 
     if(package.phantConfig.http) {
       form += templates.input({
+        type: 'number',
         label: 'Port',
         name: 'http_port',
         default: '8080',
@@ -224,25 +225,74 @@
 
   config.get = function(el) {
 
-    var cnf = [];
+    var cnf = {
+      http: false
+    };
 
-    el.find('.panel').each(function() {
+    cnf.meta = config.parseType(el, 'metas', cnf)[0];
+    cnf.keychain = config.parseType(el, 'keychains', cnf)[0];
+    cnf.inputs = config.parseType(el, 'inputs', cnf);
+    cnf.outputs = config.parseType(el, 'outputs', cnf);
+    cnf.streams = config.parseType(el, 'streams', cnf);
+    cnf.managers = config.parseType(el, 'managers', cnf);
 
-      var panel = $(this),
-          package = panel.data('package');
+    return JSON.stringify(cnf);
 
-      package.userConfig = {};
+  };
 
-      panel.find('input').each(function() {
-        var input = $(this);
-        package.userConfig[input.attr('name')] = input.val();
-      });
+  config.parseType = function(el, type, cnf) {
 
-      cnf.push(package);
+    var modules = []
+
+    el.find('.' + type + ' .panel').each(function() {
+
+      var parsed = config.parsePanel($(this));
+
+      // set global http port, and clear it from module config
+      if(parsed.userConfig.http_port) {
+        cnf.http = parsed.userConfig.http_port;
+        delete parsed.userConfig.http_port;
+      }
+
+      modules.push(parsed);
 
     });
 
-    return cnf;
+    return modules;
+
+  };
+
+  config.parsePanel = function(el) {
+
+    var package = el.data('package');
+
+    package.userConfig = {};
+
+    // add text inputs
+    el.find('input').each(function() {
+
+      var input = $(this);
+
+      if(input.attr('type') === 'number') {
+        package.userConfig[input.attr('name')] = input.val();
+      } else {
+        package.userConfig[input.attr('name')] = "'" + input.val() + "'";
+      }
+
+    });
+
+    // add required modules
+    $.each(package.phantConfig.options, function(i, v) {
+
+      if(! v.require) {
+        return;
+      }
+
+      package.userConfig[v.name] = v.require;
+
+    });
+
+    return package;
 
   };
 
