@@ -30,6 +30,7 @@ var handlebars = exphbs.create({
 var defaults = {
   'phant-input-http': {
     included: 'Phant.HttpInput',
+    name: 'phant-input-http',
     phantConfig: {
       name: 'HTTP',
       http: true,
@@ -55,6 +56,7 @@ var defaults = {
   },
   'phant-output-http': {
     included: 'Phant.HttpOutput',
+    name: 'phant-output-http',
     phantConfig: {
       name: 'HTTP',
       http: true,
@@ -80,6 +82,7 @@ var defaults = {
   },
   'phant-manager-telnet': {
     included: 'Phant.TelnetManager',
+    name: 'phant-manager-telnet',
     phantConfig: {
       name: 'Telnet',
       options: [
