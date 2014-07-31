@@ -172,12 +172,12 @@ exports.publishPackage = function(req, res) {
 
     if(err) {
       return res.json({
-        success: false
+        success: false,
         message: err
       });
     }
 
-    //npm.publish(folder, function(err) {
+    npm.publish(folder, function(err) {
 
       res.json({
         success: (err ? false : true),
@@ -185,7 +185,7 @@ exports.publishPackage = function(req, res) {
         name: name
       });
 
-    //});
+    });
 
   });
 
@@ -209,18 +209,22 @@ function createPackage(name, config, callback) {
     { tpl: 'readme.handlebars', out: 'README.md' }
   ];
 
-  mkdirp(folder, function(err) {
+  // add the package name to the config
+  config.name = name;
+
+  setUp(folder, config, function(err) {
 
     if(err) {
-      return callback('Temp folder creation failed');
+      return callback(err);
     }
 
     async.each(files, function(file, cb) {
 
       // render the template
-      handlebars(file.tpl, config, function(err, rendered) {
+      handlebars(path.join(__dirname, '..', 'views', 'config', file.tpl), config, function(err, rendered) {
 
         if(err) {
+          console.log(err);
           return cb('Generating the package failed.');
         }
 
@@ -231,14 +235,55 @@ function createPackage(name, config, callback) {
             return cb('Writing ' + file.out + ' to disk failed');
           }
 
-          cb(null, folder);
+          cb();
 
         });
 
       });
 
-    }, callback);
+    }, function(err) {
+      callback(err, folder);
+    });
 
   });
+
+}
+
+function setUp(folder, config, callback) {
+
+  config.packages = [];
+
+  request.get('https://registry.npmjs.org/phant/latest', function(err, response, body) {
+
+    if(err) {
+      return callback('Phant version could not be retrieved.');
+    }
+
+    // add the latest version of phant
+    config.packages.push(JSON.parse(body));
+
+    // add most of the other modules
+    config.packages = config.packages.concat(config.inputs, config.outputs, config.streams, config.managers);
+
+    // push meta & keychain
+    config.packages.push(config.meta, config.keychain);
+
+    // filter out packages included with npm
+    config.packages = config.packages.filter(function(p) {
+      return !p.included;
+    });
+
+    mkdirp(folder, function(err) {
+
+      if(err) {
+        return callback('Temp folder creation failed');
+      }
+
+      callback();
+
+    });
+
+  });
+
 
 }

@@ -213,7 +213,7 @@
             return bootbox.alert(res.message);
           }
 
-          window.location = 'https://npmjs.org/package/' + result;
+          window.location = 'https://npmjs.org/package/phantconfig-' + result;
 
         });
 
@@ -266,7 +266,7 @@
 
     var package = el.data('package');
 
-    package.userConfig = {};
+    package.userConfig = [];
 
     // add text inputs
     el.find('input').each(function() {
@@ -274,9 +274,9 @@
       var input = $(this);
 
       if(input.attr('type') === 'number') {
-        package.userConfig[input.attr('name')] = input.val();
+        package.userConfig.push({name: input.attr('name'), value: input.val()});
       } else {
-        package.userConfig[input.attr('name')] = "'" + input.val() + "'";
+        package.userConfig.push({name: input.attr('name'), value: "'" + input.val() + "'"});
       }
 
     });
@@ -288,7 +288,7 @@
         return;
       }
 
-      package.userConfig[v.name] = v.require;
+      package.userConfig.push({name: v.name, value: v.require});
 
     });
 

@@ -10,7 +10,7 @@ If you have the latest stable version of [node.js](http://nodejs.org) installed,
 ## Getting Started
 After installing the package, you can now start the server.
 
-  $ {{name}}
+    $ {{name}}
 
 ## Modules
 These modules were configured for a specific user. If you would like to configure your own copy of phant,
@@ -24,25 +24,29 @@ please visit [data.sparkfun.com/config](https://data.sparkfun.com/config).
 ### Inputs
 {{#each inputs}}
 * {{this.phantConfig.name}}
-{{each this.userConfig}}  * **{{@key}}** - {{this}} {{/each}}
+{{#each this.userConfig}}  * **{{this.name}}** - {{{this.value}}}
+{{/each ~}}
 {{/each}}
 
 ### Outputs
 {{#each outputs}}
 * {{phantConfig.name}}
-{{each this.userConfig}}  * **{{@key}}** - {{this}} {{/each}}
+{{#each this.userConfig}}  * **{{this.name}}** - {{{this.value}}}
+{{/each ~}}
 {{/each}}
 
 ### Storage
 {{#each streams}}
 * {{this.phantConfig.name}}
-{{each this.userConfig}}  * **{{@key}}** - {{this}} {{/each}}
+{{#each this.userConfig}}  * **{{this.name}}** - {{{this.value}}}
+{{/each ~}}
 {{/each}}
 
 ### Managers
-{{#each Managers}}
+{{#each managers}}
 * {{phantConfig.name}}
-{{each this.userConfig}}  * **{{@key}}** - {{this}} {{/each}}
+{{#each this.userConfig}}  * **{{this.name}}** - {{{this.value}}}
+{{/each ~}}
 {{/each}}
 
 ## License
