@@ -57,8 +57,10 @@ var min = new compressor.minify({
       path.join(__dirname, '..', 'public', 'third_party', 'jquery', 'dist', 'jquery.min.js'),
       path.join(__dirname, '..', 'public', 'third_party', 'bootstrap', 'dist', 'js', 'bootstrap.min.js'),
       path.join(__dirname, '..', 'public', 'third_party', 'handlebars', 'handlebars.min.js'),
+      path.join(__dirname, '..', 'public', 'third_party', 'bootbox', 'bootbox.js'),
       path.join(__dirname, '..', 'public', 'third_party', 'socket.io-client', 'socket.io.js'),
-      path.join(__dirname, '..', 'public', 'js', 'src', 'stream.js')
+      path.join(__dirname, '..', 'public', 'js', 'src', 'stream.js'),
+      path.join(__dirname, '..', 'public', 'js', 'src', 'config.js')
     ],
     fileOut: path.join(__dirname, '..', 'public', 'js', 'phant-manager.min.js'),
     callback: function(err) {
@@ -75,8 +77,10 @@ var concat = new compressor.minify({
       path.join(__dirname, '..', 'public', 'third_party', 'jquery', 'dist', 'jquery.js'),
       path.join(__dirname, '..', 'public', 'third_party', 'bootstrap', 'dist', 'js', 'bootstrap.js'),
       path.join(__dirname, '..', 'public', 'third_party', 'handlebars', 'handlebars.js'),
+      path.join(__dirname, '..', 'public', 'third_party', 'bootbox', 'bootbox.js'),
       path.join(__dirname, '..', 'public', 'third_party', 'socket.io-client', 'socket.io.js'),
-      path.join(__dirname, '..', 'public', 'js', 'src', 'stream.js')
+      path.join(__dirname, '..', 'public', 'js', 'src', 'stream.js'),
+      path.join(__dirname, '..', 'public', 'js', 'src', 'config.js')
     ],
     fileOut: path.join(__dirname, '..', 'public', 'js', 'phant-manager.js'),
     callback: function(err) {

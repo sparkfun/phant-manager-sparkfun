@@ -21,6 +21,7 @@ var handlebars = require('./helpers/handlebars');
 
 /**** routes ****/
 var index = require('./routes'),
+  config = require('./routes/config'),
   stream = require('./routes/stream');
 
 var app = {};
@@ -169,6 +170,8 @@ app.expressInit = function() {
 
   });
 
+  exp.post('/config/publish', config.publishPackage);
+  exp.post('/config/download', config.downloadPackage);
   exp.post('/streams.:ext', stream.create.bind(this));
   exp.post('/streams', stream.create.bind(this));
   exp.post('/streams/:publicKey/notify/:type.:ext', stream.notify.bind(this));
@@ -178,6 +181,8 @@ app.expressInit = function() {
   exp.delete('/streams/:publicKey', stream.remove.bind(this));
 
   exp.get('/', index.home);
+  exp.get('/config', config.make);
+  exp.get('/config/exists/:name', config.check);
   exp.get('/streams/make', stream.make);
   exp.get('/streams/delete', stream.delete);
   exp.get('/streams/clear', stream.clear);
@@ -193,7 +198,6 @@ app.expressInit = function() {
   return exp;
 
 };
-
 
 app.responseType = function(req, res, next) {
 
