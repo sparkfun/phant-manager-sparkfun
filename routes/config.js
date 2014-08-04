@@ -6,6 +6,7 @@ var npmSearch = require('npm-package-search'),
   async = require('async'),
   request = require('request'),
   exphbs = require('express3-handlebars'),
+  rimraf = require('rimraf'),
   path = require('path');
 
 var search = npmSearch(
@@ -21,7 +22,7 @@ var handlebars = exphbs.create({
   helpers: {
     variableName: function(name) {
       name = name.split('-').map(function(chunk) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+        return chunk.charAt(0).toUpperCase() + chunk.slice(1);
       });
     }
   }
@@ -34,24 +35,21 @@ var defaults = {
     phantConfig: {
       name: 'HTTP',
       http: true,
-      options: [
-        {
-          "label": "Metadata",
-          "name": "metadata",
-          "default": "phant-meta-nedb",
-          "type": "select",
-          "require": "meta",
-          "description": "The phant metadata module to use"
-        },
-        {
-          "label": "Keychain",
-          "name": "keychain",
-          "default": "phant-keychain-hex",
-          "type": "select",
-          "require": "keychain",
-          "description": "The phant keychain module to use"
-        }
-      ]
+      options: [{
+        "label": "Metadata",
+        "name": "metadata",
+        "default": "phant-meta-nedb",
+        "type": "select",
+        "require": "meta",
+        "description": "The phant metadata module to use"
+      }, {
+        "label": "Keychain",
+        "name": "keychain",
+        "default": "phant-keychain-hex",
+        "type": "select",
+        "require": "keychain",
+        "description": "The phant keychain module to use"
+      }]
     }
   },
   'phant-output-http': {
@@ -60,24 +58,21 @@ var defaults = {
     phantConfig: {
       name: 'HTTP',
       http: true,
-      options: [
-        {
-          "label": "Storage",
-          "name": "strorage",
-          "default": "phant-stream-csv",
-          "type": "select",
-          "require": "stream",
-          "description": "The phant stream storage module to use"
-        },
-        {
-          "label": "Keychain",
-          "name": "keychain",
-          "default": "phant-keychain-hex",
-          "type": "select",
-          "require": "keychain",
-          "description": "The phant keychain module to use"
-        }
-      ]
+      options: [{
+        "label": "Storage",
+        "name": "strorage",
+        "default": "phant-stream-csv",
+        "type": "select",
+        "require": "stream",
+        "description": "The phant stream storage module to use"
+      }, {
+        "label": "Keychain",
+        "name": "keychain",
+        "default": "phant-keychain-hex",
+        "type": "select",
+        "require": "keychain",
+        "description": "The phant keychain module to use"
+      }]
     }
   },
   'phant-manager-telnet': {
@@ -85,31 +80,27 @@ var defaults = {
     name: 'phant-manager-telnet',
     phantConfig: {
       name: 'Telnet',
-      options: [
-        {
-          "label": "Port",
-          "name": "port",
-          "default": "8081",
-          "type": "number",
-          "description": "The TCP port to listen on."
-        },
-        {
-          "label": "Metadata",
-          "name": "metadata",
-          "default": "phant-meta-nedb",
-          "type": "select",
-          "require": "meta",
-          "description": "The phant metadata module to use"
-        },
-        {
-          "label": "Keychain",
-          "name": "keychain",
-          "default": "phant-keychain-hex",
-          "type": "select",
-          "require": "keychain",
-          "description": "The phant keychain module to use"
-        }
-      ]
+      options: [{
+        "label": "Port",
+        "name": "port",
+        "default": "8081",
+        "type": "number",
+        "description": "The TCP port to listen on."
+      }, {
+        "label": "Metadata",
+        "name": "metadata",
+        "default": "phant-meta-nedb",
+        "type": "select",
+        "require": "meta",
+        "description": "The phant metadata module to use"
+      }, {
+        "label": "Keychain",
+        "name": "keychain",
+        "default": "phant-keychain-hex",
+        "type": "select",
+        "require": "keychain",
+        "description": "The phant keychain module to use"
+      }]
     }
   }
 };
@@ -149,7 +140,7 @@ exports.make = function(req, res) {
       res.render('config', {
         title: 'phant server configurator',
         err: err,
-        packages: JSON.stringify(util._extend(defaults,results))
+        packages: JSON.stringify(util._extend(defaults, results))
       });
 
     });
@@ -161,7 +152,9 @@ exports.make = function(req, res) {
 exports.check = function(req, res) {
 
   request.get('https://registry.npmjs.org/phantconfig-' + req.param('name'), function(err, response, body) {
-    res.json({exists: response.statusCode === 200});
+    res.json({
+      exists: response.statusCode === 200
+    });
   });
 
 };
@@ -169,11 +162,11 @@ exports.check = function(req, res) {
 exports.publishPackage = function(req, res) {
 
   var config = JSON.parse(req.param('config')),
-      name = 'phantconfig-' + req.param('name');
+    name = 'phantconfig-' + req.param('name');
 
   createPackage(name, config, function(err, folder) {
 
-    if(err) {
+    if (err) {
       return res.json({
         success: false,
         message: err
@@ -187,6 +180,8 @@ exports.publishPackage = function(req, res) {
         message: (err ? 'Publishing to npm failed.' : ''),
         name: name
       });
+
+      tearDown(folder);
 
     });
 
@@ -206,18 +201,23 @@ function createPackage(name, config, callback) {
 
   var folder = path.join('/tmp', 'phantconfig', name);
 
-  var files = [
-    { tpl: 'index.handlebars', out: 'index.js' },
-    { tpl: 'package.handlebars', out: 'package.json' },
-    { tpl: 'readme.handlebars', out: 'README.md' }
-  ];
+  var files = [{
+    tpl: 'index.handlebars',
+    out: 'index.js'
+  }, {
+    tpl: 'package.handlebars',
+    out: 'package.json'
+  }, {
+    tpl: 'readme.handlebars',
+    out: 'README.md'
+  }];
 
   // add the package name to the config
   config.name = name;
 
   setUp(folder, config, function(err) {
 
-    if(err) {
+    if (err) {
       return callback(err);
     }
 
@@ -226,14 +226,14 @@ function createPackage(name, config, callback) {
       // render the template
       handlebars(path.join(__dirname, '..', 'views', 'config', file.tpl), config, function(err, rendered) {
 
-        if(err) {
+        if (err) {
           return cb('Generating the package failed.');
         }
 
         // write it to disk
         fs.writeFile(path.join(folder, file.out), rendered, function(err) {
 
-          if(err) {
+          if (err) {
             return cb('Writing ' + file.out + ' to disk failed');
           }
 
@@ -257,7 +257,7 @@ function setUp(folder, config, callback) {
 
   request.get('https://registry.npmjs.org/phant/latest', function(err, response, body) {
 
-    if(err) {
+    if (err) {
       return callback('Phant version could not be retrieved.');
     }
 
@@ -277,7 +277,7 @@ function setUp(folder, config, callback) {
 
     mkdirp(folder, function(err) {
 
-      if(err) {
+      if (err) {
         return callback('Temp folder creation failed');
       }
 
@@ -287,4 +287,8 @@ function setUp(folder, config, callback) {
 
   });
 
+}
+
+function tearDown(folder) {
+  rimraf(folder);
 }
