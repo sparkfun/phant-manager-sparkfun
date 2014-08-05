@@ -154,7 +154,7 @@
     $.when.apply(this, promises).done(function() {
       stream.loadStats(el);
       stream.loadData(el);
-      stream.startSocketIo(el);
+      //stream.startSocketIo(el);
     });
 
     this.find('ul.pager li').click(function(e) {

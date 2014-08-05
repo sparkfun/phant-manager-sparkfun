@@ -174,6 +174,32 @@
   };
 
   config.download = function(el) {
+
+    var dl = function(type) {
+      $(templates.download({type: type, config: config.get(el)})).submit();
+    };
+
+    bootbox.dialog({
+      title: 'Download package',
+      message: 'Please select an output format.',
+      buttons: {
+        zip: {
+          label: 'zip',
+          className: 'btn-success',
+          callback: function() {
+            dl('zip');
+          }
+        },
+        tar: {
+          label: 'tar.gz',
+          className: 'btn-danger',
+          callback: function() {
+            dl('tar');
+          }
+        }
+      }
+    });
+
   };
 
   config.publish = function(el) {

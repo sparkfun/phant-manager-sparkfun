@@ -8,6 +8,9 @@
     {{#each packages}}"{{this.name}}": "^{{this.version}}"{{#unless @last}},{{/unless}}
     {{/each ~}}
   },
+  "scripts": {
+    "start": "node index.js"
+  },
   "keywords": [
     "phant",
     "IoT",

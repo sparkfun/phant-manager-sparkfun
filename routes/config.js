@@ -7,6 +7,7 @@ var npmSearch = require('npm-package-search'),
   request = require('request'),
   exphbs = require('express3-handlebars'),
   rimraf = require('rimraf'),
+  archiver = require('archiver'),
   path = require('path');
 
 var search = npmSearch(
@@ -191,15 +192,49 @@ exports.publishPackage = function(req, res) {
 
 exports.downloadPackage = function(req, res) {
 
-  res.render('config', {
-    title: 'phant server configurator'
+  var type = req.param('type'),
+    config = JSON.parse(req.param('config')),
+    archive;
+
+
+  createPackage(null, config, function(err, folder) {
+
+    if(type === 'zip') {
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', 'attachment; filename=phantconfig-custom.zip');
+      archive = archiver('zip');
+    } else {
+      res.setHeader('Content-Type', 'application/x-gzip');
+      res.setHeader('Content-Disposition', 'attachment; filename=phantconfig-custom.tar.gz');
+      archive = archiver('tar', {
+        gzip: true,
+        gzipOptions: {
+          level: 1
+        }
+      });
+    }
+
+    archive.pipe(res);
+
+    archive
+      .append(fs.createReadStream(folder + '/index.js'), { name: 'index.js' })
+      .append(fs.createReadStream(folder + '/package.json'), { name: 'package.json' })
+      .append(fs.createReadStream(folder + '/README.md'), { name: 'README.md' })
+      .finalize();
+
+
+    res.on('close', function() {
+      tearDown(folder);
+    });
+
   });
+
 
 };
 
 function createPackage(name, config, callback) {
 
-  var folder = path.join('/tmp', 'phantconfig', name);
+  var folder = path.join('/tmp', 'phantconfig', name || 'phantconfig-custom' + Date.now());
 
   var files = [{
     tpl: 'index.handlebars',
@@ -213,7 +248,8 @@ function createPackage(name, config, callback) {
   }];
 
   // add the package name to the config
-  config.name = name;
+  config.name = name || 'phantconfig-custom';
+  config.download = (name ? false : true);
 
   setUp(folder, config, function(err) {
 
