@@ -1,8 +1,7 @@
 (function($) {
 
   var templates = {},
-      config = {}
-      require = { input: false, output: false, meta: true, keychain: true, stream: false, manager: false };
+      config = {};
 
   config.loadTemplates = function(el) {
 
@@ -97,7 +96,6 @@
     $.each(package.phantConfig.options, function(i, opt) {
 
       if(opt.require) {
-        require[opt.require] = true;
         form += templates.label(opt);
         return;
       }
@@ -119,28 +117,26 @@
 
   config.validate = function(el) {
 
-    if(require.meta) {
+    var require = {};
 
-      if(el.find('.metas').children().length > 1) {
-        throw 'You only need one metadata module. Please remove one.';
-      }
+    el.find('.panel .require').each(function() {
+      require[$(this).data('require')] = true;
+    });
 
-      if(el.find('.metas').children().length < 1) {
-        throw 'You must select a metadata module.';
-      }
-
+    if(el.find('.metas').children().length > 1) {
+      throw 'You only need one metadata module. Please remove one.';
     }
 
-    if(require.keychain) {
+    if(el.find('.metas').children().length < 1) {
+      throw 'You must select a metadata module.';
+    }
 
-      if(el.find('.keychains').children().length > 1) {
-        throw 'You only need one keychain module. Please remove one.';
-      }
+    if(el.find('.keychains').children().length > 1) {
+      throw 'You only need one keychain module. Please remove one.';
+    }
 
-      if(el.find('.keychains').children().length < 1) {
-        throw 'You must select a keychain module.';
-      }
-
+    if(el.find('.keychains').children().length < 1) {
+      throw 'You must select a keychain module.';
     }
 
     if(require.stream) {

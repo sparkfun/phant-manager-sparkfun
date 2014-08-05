@@ -12,7 +12,7 @@ var npmSearch = require('npm-package-search'),
 
 var search = npmSearch(
   path.join('/tmp/npm.json'), {
-    interval: 3600 * 1000
+    interval: 600 * 1000
   }
 );
 
@@ -25,6 +25,7 @@ var handlebars = exphbs.create({
       name = name.split('-').map(function(chunk) {
         return chunk.charAt(0).toUpperCase() + chunk.slice(1);
       });
+      return name.join('');
     }
   }
 }).engine;
@@ -199,7 +200,7 @@ exports.downloadPackage = function(req, res) {
 
   createPackage(null, config, function(err, folder) {
 
-    if(type === 'zip') {
+    if (type === 'zip') {
       res.setHeader('Content-Type', 'application/zip');
       res.setHeader('Content-Disposition', 'attachment; filename=phantconfig-custom.zip');
       archive = archiver('zip');
@@ -217,9 +218,15 @@ exports.downloadPackage = function(req, res) {
     archive.pipe(res);
 
     archive
-      .append(fs.createReadStream(folder + '/index.js'), { name: 'index.js' })
-      .append(fs.createReadStream(folder + '/package.json'), { name: 'package.json' })
-      .append(fs.createReadStream(folder + '/README.md'), { name: 'README.md' })
+      .append(fs.createReadStream(folder + '/index.js'), {
+        name: 'index.js'
+      })
+      .append(fs.createReadStream(folder + '/package.json'), {
+        name: 'package.json'
+      })
+      .append(fs.createReadStream(folder + '/README.md'), {
+        name: 'README.md'
+      })
       .finalize();
 
 
