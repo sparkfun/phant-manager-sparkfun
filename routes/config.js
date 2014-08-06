@@ -62,7 +62,7 @@ var defaults = {
       http: true,
       options: [{
         "label": "Storage",
-        "name": "strorage",
+        "name": "storage",
         "default": "phant-stream-csv",
         "type": "select",
         "require": "stream",
