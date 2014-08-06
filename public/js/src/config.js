@@ -52,9 +52,21 @@
 
     var selected = $(this),
         conf = selected.data('package'),
-        type = selected.data('type');
+        type = selected.data('type'),
+        exists = false;
 
     e.preventDefault();
+
+    // check for existing copies of the module
+    $('.panel').each(function() {
+      if($(this).data('package').name === conf.name) {
+        exists = true;
+      }
+    });
+
+    if(exists) {
+      return bootbox.alert('A configuration for this module already has been added.');
+    }
 
     if(type !== 'meta' && type !== 'keychain')  {
       $('.' + type + 's').append(config.buildContainer(type, conf));
