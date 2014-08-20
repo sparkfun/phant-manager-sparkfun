@@ -6062,13 +6062,13 @@ div.stream-metadata div.formats {
 @media (min-width: 992px) {
   div.stream-metadata div.formats {
     float: left;
-    width: 25%;
+    width: 41.66666667%;
   }
 }
 @media (min-width: 768px) {
   div.stream-metadata div.formats {
     float: left;
-    width: 25%;
+    width: 41.66666667%;
   }
 }
 div.stream-metadata div.tags {
@@ -6082,7 +6082,7 @@ div.stream-metadata div.tags {
 @media (min-width: 992px) {
   div.stream-metadata div.tags {
     float: left;
-    width: 66.66666667%;
+    width: 50%;
   }
 }
 @media (min-width: 992px) {
@@ -6093,7 +6093,7 @@ div.stream-metadata div.tags {
 @media (min-width: 768px) {
   div.stream-metadata div.tags {
     float: left;
-    width: 66.66666667%;
+    width: 50%;
   }
 }
 @media (min-width: 768px) {

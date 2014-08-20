@@ -24112,16 +24112,16 @@ function hasOwnProperty(obj, prop) {
 
   };
 
-  stream.startSocketIo = function(el) {
+  stream.startMQTT = function(el) {
 
-    var socket = io(),
+    var client = mows.createClient(),
         body = el.find('table tbody');
 
-    socket.on('connect', function() {
-      socket.emit('room', el.data('key'));
-    });
+    client.subscribe('output/' + el.data('key'));
 
-    socket.on('data', function(data) {
+    client.on('message', function (topic, data) {
+
+      data = JSON.parse(data);
 
       var keys = Object.keys(data).sort(),
           rec = [];
@@ -24136,10 +24136,6 @@ function hasOwnProperty(obj, prop) {
 
       stream.highlight(body.find('tr').first());
 
-    });
-
-    socket.on('clear', function() {
-      body.html('');
     });
 
   };
@@ -24169,7 +24165,7 @@ function hasOwnProperty(obj, prop) {
     $.when.apply(this, promises).done(function() {
       stream.loadStats(el);
       stream.loadData(el);
-      //stream.startSocketIo(el);
+      stream.startMQTT(el);
     });
 
     this.find('ul.pager li').click(function(e) {
