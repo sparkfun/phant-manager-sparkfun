@@ -58,7 +58,8 @@ module.exports = function(grunt) {
     less: {
       development: {
         files: {
-          "public/css/phant.css": "less/phant.less"
+          "public/css/phant.css": "less/phant.less",
+          "public/css/svg.css": "less/svg.less"
         }
       },
       production: {
@@ -67,7 +68,8 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files: {
-          "public/css/phant.min.css": "less/phant.less"
+          "public/css/phant.min.css": "less/phant.less",
+          "public/css/svg.min.css": "less/svg.less"
         }
       }
     },
@@ -84,8 +86,11 @@ module.exports = function(grunt) {
         src: [
           'third_party/jquery/dist/jquery.js',
           'third_party/bootstrap/dist/js/bootstrap.js',
+          'third_party/bootbox/bootbox.js',
           'third_party/handlebars/handlebars.js',
-          'public/js/src/stream.js'
+          'public/js/src/mows.js',
+          'public/js/src/stream.js',
+          'public/js/src/config.js'
         ],
         dest: 'public/js/phant-manager.js',
       }
