@@ -24114,7 +24114,8 @@ function hasOwnProperty(obj, prop) {
 
   stream.startMQTT = function(el) {
 
-    var client = mows.createClient(),
+    var secure = /https/.test(window.location.protocol),
+        client = mows.createClient((secure ? 'wss' : 'ws') + '://' + window.location.host),
         body = el.find('table tbody');
 
     client.subscribe('output/' + el.data('key'));
