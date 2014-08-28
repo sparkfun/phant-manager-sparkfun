@@ -14,7 +14,8 @@ var express = require('express'),
   events = require('events'),
   favicon = require('static-favicon'),
   bodyParser = require('body-parser'),
-  exphbs = require('express-handlebars');
+  exphbs = require('express-handlebars'),
+  rev = Date.now();
 
 /**** helpers ****/
 var handlebars = require('./helpers/handlebars');
@@ -108,7 +109,7 @@ app.expressInit = function() {
     res.locals.url = url.parse(req.url);
     res.locals.url.protocol = req.protocol;
     res.locals.url.host = req.get('host');
-    res.locals.rev = Date.now();
+    res.locals.rev = rev;
 
     if (req.headers['phant-private-key']) {
       req.query.privateKey = req.headers['phant-private-key'];
