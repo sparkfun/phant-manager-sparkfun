@@ -108,6 +108,7 @@ app.expressInit = function() {
     res.locals.url = url.parse(req.url);
     res.locals.url.protocol = req.protocol;
     res.locals.url.host = req.get('host');
+    res.locals.rev = Date.now();
 
     if (req.headers['phant-private-key']) {
       req.query.privateKey = req.headers['phant-private-key'];
