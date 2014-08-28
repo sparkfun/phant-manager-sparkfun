@@ -2,11 +2,19 @@
 
   <div class="row stream-metadata">
 
-    <div class="col-md-12">
+    <div class="col-md-10">
       <h1>
         {{stream.title}}
         <span class="small">{{stream.description}}</span>
       </h1>
+    </div>
+
+    <div class="col-md-2">
+      <div class="btn-group btn-group-xs pull-right">
+        <a class="btn btn-success" href="#" id="edit_stream" data-public="{{publicKey}}">Edit</a>
+        <a class="btn btn-info" href="/streams/clear">Clear</a>
+        <a class="btn btn-primary" href="/streams/delete">Delete</a>
+      </div>
     </div>
 
     <div class="formats">

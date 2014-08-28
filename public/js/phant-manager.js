@@ -24642,6 +24642,24 @@ function hasOwnProperty(obj, prop) {
 
   };
 
+  stream.edit = function(e) {
+
+    var publicKey = $(this).data('public');
+
+    e.preventDefault();
+
+    bootbox.prompt('Please enter the private key for this stream', function(result) {
+
+      if (result === null) {
+        return;
+      }
+
+      window.location = '/streams/' + publicKey + '/edit/' + result;
+
+    });
+
+  };
+
   stream.highlight = function(el) {
 
     var mask = $('<div/>').css({
@@ -24669,6 +24687,8 @@ function hasOwnProperty(obj, prop) {
       stream.loadData(el);
       stream.startMQTT(el);
     });
+
+    $('#edit_stream').click(stream.edit);
 
     this.find('ul.pager li').click(function(e) {
 
