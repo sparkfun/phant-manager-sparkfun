@@ -190,6 +190,7 @@ app.expressInit = function() {
   exp.get('/streams/make', stream.make);
   exp.get('/streams/delete', stream.delete);
   exp.get('/streams/clear', stream.clear);
+  exp.get('/streams/map', stream.map.bind(this));
   exp.get('/streams/tag/:tag.:ext', stream.tag.bind(this));
   exp.get('/streams/tag/:tag', stream.tag.bind(this));
   exp.get('/streams/city/:city.:ext', stream.city.bind(this));

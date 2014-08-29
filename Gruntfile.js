@@ -94,6 +94,7 @@ module.exports = function(grunt) {
           'third_party/leaflet/dist/leaflet-src.js',
           'public/js/src/mows.js',
           'public/js/src/stream.js',
+          'public/js/src/map.js',
           'public/js/src/config.js',
           'public/js/src/make.js'
         ],

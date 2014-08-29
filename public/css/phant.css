@@ -6436,6 +6436,9 @@ div.info-blocks .blocks div.block4 a {
 div.info-blocks .blocks div.block5 {
   background-color: #222222;
 }
+.location_map {
+  height: 400px;
+}
 div.stream {
   border-bottom: 1px solid #eeeeee;
   padding: 1em 0;

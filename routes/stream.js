@@ -5,6 +5,47 @@ exports.make = function(req, res) {
   });
 };
 
+exports.map = function(req, res, next) {
+
+  var self = this,
+    error = Err.bind(this, next),
+    query = {
+      hidden: false,
+      flagged: false,
+      'location.lat': { $exists: true },
+      'location.lng': { $exists: true }
+    },
+    sort = {
+      property: 'last_push',
+      direction: 'desc'
+    };
+
+  this.metadata.list(function(err, streams) {
+
+    if (err) {
+      return error(500, 'Loading the stream list failed.');
+    }
+
+    streams = streams.map(function(stream) {
+      stream = {
+        publicKey: self.keychain.publicKey(stream.id),
+        lat: stream.location.lat,
+        lng: stream.location.lng,
+        title: stream.title,
+        location: stream.location.city + ', ' + stream.location.state + ', ' + stream.location.country
+      };
+      return stream;
+    });
+
+    res.render('streams/map', {
+      title: 'Public Stream Locations',
+      streams: JSON.stringify(streams)
+    });
+
+  }, query, 0, 1000, sort);
+
+};
+
 exports.edit = function(req, res, next) {
 
   var pub = req.param('publicKey'),
