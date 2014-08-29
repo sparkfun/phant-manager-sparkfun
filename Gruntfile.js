@@ -91,6 +91,7 @@ module.exports = function(grunt) {
           'third_party/bootstrap/dist/js/bootstrap.js',
           'third_party/bootbox/bootbox.js',
           'third_party/handlebars/handlebars.js',
+          'third_party/leaflet/dist/leaflet-src.js',
           'public/js/src/mows.js',
           'public/js/src/stream.js',
           'public/js/src/config.js',
