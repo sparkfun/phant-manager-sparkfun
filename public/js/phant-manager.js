@@ -33932,7 +33932,7 @@ function hasOwnProperty(obj, prop) {
 
     // map init
     map = L.map(el).setView([20, 0], 2);
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
