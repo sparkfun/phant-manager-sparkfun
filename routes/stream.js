@@ -12,8 +12,12 @@ exports.map = function(req, res, next) {
     query = {
       hidden: false,
       flagged: false,
-      'location.lat': { $exists: true },
-      'location.lng': { $exists: true }
+      'location.lat': {
+        $exists: true
+      },
+      'location.lng': {
+        $exists: true
+      }
     },
     sort = {
       property: 'last_push',
@@ -37,9 +41,19 @@ exports.map = function(req, res, next) {
       return stream;
     });
 
-    res.render('streams/map', {
-      title: 'Public Stream Locations',
-      streams: JSON.stringify(streams)
+    res.format({
+      html: function() {
+        res.render('streams/map', {
+          title: 'Public Stream Locations',
+          streams: JSON.stringify(streams)
+        });
+      },
+      json: function() {
+        res.json({
+          success: true,
+          streams: streams
+        });
+      }
     });
 
   }, query, 0, 1000, sort);
