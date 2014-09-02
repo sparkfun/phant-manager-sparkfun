@@ -6,15 +6,22 @@
   var methods = {
     addMarkers: function() {
 
-      var streams = $(el).data('locations');
+      var streams = $(el).data('locations'),
+          markers = new L.MarkerClusterGroup();
 
       $.each(streams, function(i, v) {
 
-        L.marker([v.lat, v.lng]).addTo(map).bindPopup(
+        var marker = L.marker([v.lat, v.lng]);
+
+        marker.bindPopup(
           '<a href="/streams/' + v.publicKey + '">' + v.title + '</a><br>' + v.location
         );
 
+        markers.addLayer(marker);
+
       });
+
+      map.addLayer(markers);
 
     }
   };
