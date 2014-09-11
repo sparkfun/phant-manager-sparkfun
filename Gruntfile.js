@@ -89,15 +89,16 @@ module.exports = function(grunt) {
           'third_party/jquery/dist/jquery.js',
           'third_party/ubilabs-geocomplete/jquery.geocomplete.js',
           'third_party/bootstrap/dist/js/bootstrap.js',
+          'third_party/bootstrap-tagsinput/src/bootstrap-tagsinput.js',
           'third_party/bootbox/bootbox.js',
           'third_party/handlebars/handlebars.js',
           'third_party/leaflet/dist/leaflet-src.js',
           'third_party/leaflet.markercluster/dist/leaflet.markercluster-src.js',
           'public/js/src/mows.js',
-          'public/js/src/stream.js',
           'public/js/src/map.js',
           'public/js/src/config.js',
-          'public/js/src/make.js'
+          'public/js/src/form.js',
+          'public/js/src/stream.js'
         ],
         dest: 'public/js/phant-manager.js',
       }

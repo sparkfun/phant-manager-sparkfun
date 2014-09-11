@@ -9,9 +9,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <link href="/css/phant.min.css?rev={{rev}}" rel="stylesheet">
+    {{#if dev}}
+    <link href="/css/phant.css?rev={{rev}}" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
     <script src="/js/phant-manager.js?rev={{rev}}"></script>
+    {{else}}
+    <link href="/css/phant.min.css?rev={{rev}}" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
+    <script src="/js/phant-manager.min.js?rev={{rev}}"></script>
+    {{/if}}
 
   </head>
 

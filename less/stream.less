@@ -130,3 +130,34 @@ div.stream-data {
   }
 
 }
+
+.form-group.required .control-label:after {
+  content: "*";
+  color: @brand-primary;
+}
+
+.bootstrap-tagsinput {
+  .form-control;
+  display: block;
+  width: 100%;
+}
+
+.has-feedback {
+
+  .taken, .free {
+    display: none;
+  }
+
+  &.has-success {
+    .free {
+      display: block;
+    }
+  }
+
+  &.has-error {
+    .taken {
+      display: block;
+    }
+  }
+
+}

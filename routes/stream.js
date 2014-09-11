@@ -1,5 +1,24 @@
+var util = require('util');
+
+exports.aliasExists = function(req, res, next) {
+
+  var alias = req.param('alias'),
+    pub = req.param('pub'),
+    id = pub ? this.keychain.getIdFromPublicKey(pub) : null;
+
+  this.validator.aliasExists(alias, id, function(err, exists) {
+
+    res.json({
+      err: err,
+      exists: exists
+    });
+
+  });
+
+};
+
 exports.make = function(req, res) {
-  res.render('streams/make', {
+  res.render('streams/form', {
     title: 'New Stream',
     post: req.body
   });
@@ -100,7 +119,8 @@ exports.edit = function(req, res, next) {
         description: stream.description,
         hidden: stream.hidden,
         fields: stream.fields.join(', '),
-        tags: stream.tags.join(', ')
+        tags: stream.tags.join(', '),
+        alias: stream.alias
       };
 
       if (stream.location) {
@@ -114,7 +134,8 @@ exports.edit = function(req, res, next) {
 
     }
 
-    res.render('streams/edit', {
+    res.render('streams/form', {
+      edit: true,
       title: 'Edit Stream',
       publicKey: pub,
       privateKey: prv,
@@ -159,7 +180,11 @@ exports.list = function(req, res, next) {
     }
 
     streams = streams.map(function(stream) {
+      stream = util._extend({}, stream);
       stream.publicKey = self.keychain.publicKey(stream.id);
+      delete stream.flagged;
+      delete stream.id;
+      delete stream._id;
       return stream;
     });
 
@@ -175,7 +200,11 @@ exports.list = function(req, res, next) {
       json: function() {
         res.json({
           success: true,
-          streams: streams
+          streams: streams.map(function(stream) {
+            stream = util._extend({}, stream);
+            delete stream.location;
+            return stream;
+          })
         });
       }
     });
@@ -208,7 +237,11 @@ exports.tag = function(req, res, next) {
     }
 
     streams = streams.map(function(stream) {
+      stream = util._extend({}, stream);
       stream.publicKey = self.keychain.publicKey(stream.id);
+      delete stream.flagged;
+      delete stream.id;
+      delete stream._id;
       return stream;
     });
 
@@ -224,7 +257,11 @@ exports.tag = function(req, res, next) {
       json: function() {
         res.json({
           success: true,
-          streams: streams
+          streams: streams.map(function(stream) {
+            stream = util._extend({}, stream);
+            delete stream.location;
+            return stream;
+          })
         });
       }
     });
@@ -267,13 +304,65 @@ exports.view = function(req, res, next) {
       json: function() {
         res.json({
           success: true,
-          stream: stream,
-          publicKey: req.param('publicKey')
+          publicKey: req.param('publicKey'),
+          stream: (function() {
+            var s = util._extend({}, stream);
+            delete s.flagged;
+            delete s.id;
+            delete s._id;
+            delete s.location;
+            return s;
+          })()
         });
       }
     });
 
   });
+
+};
+
+exports.alias = function(req, res, next) {
+
+  var alias = req.param('alias'),
+    passMessage = PassMessage.bind(this, req, res, next),
+    self = this;
+
+  this.metadata.list(function(err, streams) {
+
+    if (!streams || err || streams.length !== 1) {
+      return passMessage(404, 'Stream not found.', '/streams');
+    }
+
+    var stream = streams[0],
+      pub = self.keychain.publicKey(stream.id);
+
+    res.format({
+      html: function() {
+        res.render('streams/view', {
+          title: 'Stream ' + pub,
+          publicKey: pub,
+          stream: stream
+        });
+      },
+      json: function() {
+        res.json({
+          success: true,
+          publicKey: pub,
+          stream: (function() {
+            var s = util._extend({}, stream);
+            delete s.flagged;
+            delete s.id;
+            delete s._id;
+            delete s.location;
+            return s;
+          })()
+        });
+      }
+    });
+
+  }, {
+    alias: alias
+  }, 0, 1);
 
 };
 
@@ -301,6 +390,10 @@ exports.create = function(req, res, next) {
     stream.fields = req.param('fields').trim().split(',').map(function(field) {
       return field.trim();
     });
+  }
+
+  if (req.param('alias') && req.param('alias').trim()) {
+    stream.alias = req.param('alias').replace(/\W/g, '').toLowerCase();
   }
 
   if (req.param('location_country') && req.param('location_country').trim()) {
@@ -344,7 +437,14 @@ exports.create = function(req, res, next) {
         json: function() {
           res.json({
             success: true,
-            stream: stream,
+            stream: (function() {
+              var s = util._extend({}, stream);
+              delete s.flagged;
+              delete s.id;
+              delete s._id;
+              delete s.location;
+              return s;
+            })(),
             publicKey: self.keychain.publicKey(stream.id),
             privateKey: self.keychain.privateKey(stream.id),
             deleteKey: self.keychain.deleteKey(stream.id)
@@ -403,7 +503,7 @@ exports.update = function(req, res, next) {
   if (req.param('fields') && req.param('fields').trim()) {
 
     // clear stream if fields change
-    if (req.param('fields').trim() !== req.param('field_check').trim()) {
+    if (req.param('fields').trim() !== req.param('field_check', '').trim()) {
       self.emit('clear', id);
     }
 
@@ -411,6 +511,10 @@ exports.update = function(req, res, next) {
       return field.trim();
     });
 
+  }
+
+  if (req.param('alias') && req.param('alias').trim()) {
+    stream.alias = req.param('alias').replace(/\W/g, '').toLowerCase();
   }
 
   if (req.param('location_country') && req.param('location_country').trim()) {
@@ -428,7 +532,7 @@ exports.update = function(req, res, next) {
   stream.description = req.param('description');
   stream.hidden = (req.param('hidden') === '1' ? true : false);
 
-  this.validator.create(stream, function(err) {
+  this.validator.update(id, stream, function(err) {
 
     if (err) {
       return passMessage(400, 'Updating stream failed - ' + err, '/streams/' + pub + '/edit/' + prv);
@@ -446,6 +550,58 @@ exports.update = function(req, res, next) {
 
   });
 
+};
+
+exports.keys = function(req, res, next) {
+
+  var self = this,
+    pub = req.param('publicKey'),
+    prv = req.param('privateKey'),
+    ext = req.param('ext'),
+    error = Err.bind(this, next),
+    id;
+
+  // check for public key
+  if (!pub) {
+    return error(404, 'Stream not found.');
+  }
+
+  // check for private key
+  if (!prv) {
+    return error(403, 'Forbidden: missing private key');
+  }
+
+  // validate keys
+  if (!this.keychain.validate(pub, prv)) {
+    return error(401, 'Forbidden: invalid key');
+  }
+
+  // optional response type - unknown ext default to json, could be better
+  if (ext) {
+    res.type(ext);
+  }
+
+  id = this.keychain.getIdFromPrivateKey(prv);
+
+  this.metadata.get(id, function(err, stream) {
+    var prefix = req.protocol + '://' + req.get('host');
+    var keys = {
+      title: stream.title,
+      outputUrl: prefix + '/output/' + pub,
+      inputUrl: prefix + '/input/' + pub,
+      manageUrl: prefix + '/streams/' + pub,
+      publicKey: pub,
+      privateKey: prv,
+      deleteKey: self.keychain.deleteKey(stream.id)
+    };
+
+    res.setHeader('Content-Disposition', 'attachment; filename=keys_' + pub + '.' + (ext ? ext : 'json'));
+    res.format({
+      json: function() {
+        res.json(keys);
+      }
+    });
+  });
 };
 
 exports.notify = function(req, res, next) {
@@ -531,7 +687,7 @@ exports.remove = function(req, res, next) {
 
   // check for private key
   if (!del) {
-    return error(403, 'Forbidden: missing del key');
+    return error(403, 'Forbidden: missing delete key');
   }
 
   // validate keys
@@ -544,7 +700,7 @@ exports.remove = function(req, res, next) {
   this.metadata.delete(id, function(err, success) {
 
     if (err) {
-      return error(500, 'Deleting stream failed');
+      return error(500, 'Deleting stream failed' + err);
     }
 
     self.emit('clear', id);
@@ -580,7 +736,11 @@ function listLocation(type, req, res, next) {
     }
 
     streams = streams.map(function(stream) {
+      stream = util._extend({}, stream);
       stream.publicKey = self.keychain.publicKey(stream.id);
+      delete stream.flagged;
+      delete stream.id;
+      delete stream._id;
       return stream;
     });
 
@@ -596,7 +756,11 @@ function listLocation(type, req, res, next) {
       json: function() {
         res.json({
           success: true,
-          streams: streams
+          streams: streams.map(function(stream) {
+            stream = util._extend({}, stream);
+            delete stream.location;
+            return stream;
+          })
         });
       }
     });

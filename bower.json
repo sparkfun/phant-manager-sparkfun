@@ -36,6 +36,7 @@
     "ubilabs-geocomplete": "~1.5.1",
     "bootbox": "~4.3.0",
     "leaflet": "~0.7.3",
-    "leaflet.markercluster": "~0.4.0"
+    "leaflet.markercluster": "~0.4.0",
+    "bootstrap-tagsinput": "TimSchlechter/bootstrap-tagsinput#master"
   }
 }

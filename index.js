@@ -99,13 +99,16 @@ app.expressInit = function() {
 
   exp.use(express.compress());
   exp.use(bodyParser.json());
-  exp.use(bodyParser.urlencoded());
+  exp.use(bodyParser.urlencoded({
+    extended: true
+  }));
   exp.use(this.responseType);
 
   exp.use(function(req, res, next) {
 
     res.header('X-Powered-By', 'phant');
 
+    res.locals.dev = (exp.get('env') === 'development');
     res.locals.url = url.parse(req.url);
     res.locals.url.protocol = req.protocol;
     res.locals.url.host = req.get('host');
@@ -200,14 +203,19 @@ app.expressInit = function() {
   exp.get('/streams/state/:state', stream.state.bind(this));
   exp.get('/streams/country/:country.:ext', stream.country.bind(this));
   exp.get('/streams/country/:country', stream.country.bind(this));
+  exp.get('/streams/check_alias', stream.aliasExists.bind(this));
   exp.get('/streams/:publicKey/delete/:deleteKey.:ext', stream.remove.bind(this));
   exp.get('/streams/:publicKey/delete/:deleteKey', stream.remove.bind(this));
   exp.get('/streams/:publicKey/edit/:privateKey.:ext', stream.edit.bind(this));
   exp.get('/streams/:publicKey/edit/:privateKey', stream.edit.bind(this));
+  exp.get('/streams/:publicKey/keys/:privateKey.:ext', stream.keys.bind(this));
+  exp.get('/streams/:publicKey/keys/:privateKey', stream.keys.bind(this));
   exp.get('/streams/:publicKey.:ext', stream.view.bind(this));
   exp.get('/streams/:publicKey', stream.view.bind(this));
   exp.get('/streams.:ext', stream.list.bind(this));
   exp.get('/streams', stream.list.bind(this));
+  exp.get('/:alias.:ext', stream.alias.bind(this));
+  exp.get('/:alias', stream.alias.bind(this));
 
   return exp;
 
