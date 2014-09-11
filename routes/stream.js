@@ -180,7 +180,7 @@ exports.list = function(req, res, next) {
     }
 
     streams = streams.map(function(stream) {
-      var s = util._extend({}, stream);
+      var s = util._extend({}, stream.toObject());
       s.publicKey = self.keychain.publicKey(stream.id);
       return s;
     });
@@ -237,7 +237,7 @@ exports.tag = function(req, res, next) {
     }
 
     streams = streams.map(function(stream) {
-      var s = util._extend({}, stream);
+      var s = util._extend({}, stream.toObject());
       s.publicKey = self.keychain.publicKey(stream.id);
       return s;
     });
@@ -736,7 +736,7 @@ function listLocation(type, req, res, next) {
     }
 
     streams = streams.map(function(stream) {
-      var s = util._extend({}, stream);
+      var s = util._extend({}, stream.toObject());
       s.publicKey = self.keychain.publicKey(stream.id);
       return s;
     });
