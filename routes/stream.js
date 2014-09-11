@@ -180,9 +180,9 @@ exports.list = function(req, res, next) {
     }
 
     streams = streams.map(function(stream) {
-      stream = util._extend({}, stream);
-      stream.publicKey = self.keychain.publicKey(stream.id);
-      return stream;
+      var s = util._extend({}, stream);
+      s.publicKey = self.keychain.publicKey(stream.id);
+      return s;
     });
 
     res.format({
@@ -237,9 +237,9 @@ exports.tag = function(req, res, next) {
     }
 
     streams = streams.map(function(stream) {
-      stream = util._extend({}, stream);
-      stream.publicKey = self.keychain.publicKey(stream.id);
-      return stream;
+      var s = util._extend({}, stream);
+      s.publicKey = self.keychain.publicKey(stream.id);
+      return s;
     });
 
     res.format({
@@ -736,9 +736,9 @@ function listLocation(type, req, res, next) {
     }
 
     streams = streams.map(function(stream) {
-      stream = util._extend({}, stream);
-      stream.publicKey = self.keychain.publicKey(stream.id);
-      return stream;
+      var s = util._extend({}, stream);
+      s.publicKey = self.keychain.publicKey(stream.id);
+      return s;
     });
 
     res.format({
