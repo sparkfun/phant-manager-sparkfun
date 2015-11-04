@@ -5802,6 +5802,7 @@ nav.mobile-nav:after {
 .leaflet-container {
   overflow: hidden;
   -ms-touch-action: none;
+  touch-action: none;
 }
 .leaflet-tile,
 .leaflet-marker-icon,
@@ -6666,6 +6667,7 @@ div.stream-metadata div.controls {
 @media (min-width: 768px) {
   div.stream-metadata div.controls a {
     float: right !important;
+    margin-right: 2px;
   }
 }
 @media (max-width: 767px) {
