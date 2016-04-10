@@ -109,7 +109,7 @@ var defaults = {
 
 npm.load();
 
-/*exports.make = function(req, res) {
+exports.make = function(req, res) {
 
   var get = function(name) {
 
@@ -129,27 +129,23 @@ npm.load();
 
   };
 
-  search(/^phant-/, function(err, packages) {
+  var info = {};
 
-    var info = {};
+  /*packages.forEach(function(p) {
+    info[p.name] = get(p.name);
+  });*/
 
-    packages.forEach(function(p) {
-      info[p.name] = get(p.name);
-    });
+  async.parallel(info, function(err, results) {
 
-    async.parallel(info, function(err, results) {
-
-      res.render('config', {
-        title: 'phant server configurator',
-        err: err,
-        packages: JSON.stringify(util._extend(defaults, results))
-      });
-
+    res.render('config', {
+      title: 'phant server configurator',
+      err: err,
+      packages: JSON.stringify(util._extend(defaults, results))
     });
 
   });
 
-};*/
+};
 
 exports.check = function(req, res) {
 
