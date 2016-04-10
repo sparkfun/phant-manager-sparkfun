@@ -131,9 +131,9 @@ exports.make = function(req, res) {
 
   var info = {};
 
-  /*packages.forEach(function(p) {
+  packages.forEach(function(p) {
     info[p.name] = get(p.name);
-  });*/
+  });
 
   async.parallel(info, function(err, results) {
 
