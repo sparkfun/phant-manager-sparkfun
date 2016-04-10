@@ -175,7 +175,7 @@ app.expressInit = function() {
 
   });
 
-  exp.post('/config/publish', config.publishPackage);
+  //exp.post('/config/publish', config.publishPackage);
   exp.post('/config/download', config.downloadPackage);
   exp.post('/streams.:ext', stream.create.bind(this));
   exp.post('/streams', stream.create.bind(this));
@@ -188,7 +188,7 @@ app.expressInit = function() {
   exp.delete('/streams/:publicKey', stream.remove.bind(this));
 
   exp.get('/', index.home);
-  exp.get('/config', config.make);
+  //exp.get('/config', config.make);
   exp.get('/config/exists/:name', config.check);
   exp.get('/streams/make', stream.make);
   exp.get('/streams/delete', stream.delete);
