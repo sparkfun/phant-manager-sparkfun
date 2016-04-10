@@ -109,7 +109,7 @@ var defaults = {
 
 npm.load();
 
-exports.make = function(req, res) {
+/*exports.make = function(req, res) {
 
   var get = function(name) {
 
@@ -149,7 +149,7 @@ exports.make = function(req, res) {
 
   });
 
-};
+};*/
 
 exports.check = function(req, res) {
 
@@ -161,7 +161,7 @@ exports.check = function(req, res) {
 
 };
 
-exports.publishPackage = function(req, res) {
+/*exports.publishPackage = function(req, res) {
 
   var config = JSON.parse(req.param('config')),
     name = 'phantconfig-' + req.param('name');
@@ -189,7 +189,7 @@ exports.publishPackage = function(req, res) {
 
   });
 
-};
+};*/
 
 exports.downloadPackage = function(req, res) {
 
