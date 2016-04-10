@@ -109,7 +109,7 @@ var defaults = {
 
 npm.load();
 
-exports.make = function(req, res) {
+/*exports.make = function(req, res) {
 
   var get = function(name) {
 
@@ -145,7 +145,7 @@ exports.make = function(req, res) {
 
   });
 
-};
+};*/
 
 exports.check = function(req, res) {
 
