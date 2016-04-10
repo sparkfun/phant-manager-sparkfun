@@ -188,7 +188,7 @@ app.expressInit = function() {
   exp.delete('/streams/:publicKey', stream.remove.bind(this));
 
   exp.get('/', index.home);
-  //exp.get('/config', config.make);
+  exp.get('/config', config.make);
   exp.get('/config/exists/:name', config.check);
   exp.get('/streams/make', stream.make);
   exp.get('/streams/delete', stream.delete);
