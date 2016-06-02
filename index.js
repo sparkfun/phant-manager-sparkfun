@@ -23,7 +23,8 @@ var handlebars = require('./helpers/handlebars');
 /**** routes ****/
 var index = require('./routes'),
   config = require('./routes/config'),
-  stream = require('./routes/stream');
+  stream = require('./routes/stream'),
+  status = require('./routes/ifttt-status');
 
 var app = {};
 
