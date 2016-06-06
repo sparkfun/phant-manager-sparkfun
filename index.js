@@ -177,7 +177,7 @@ app.expressInit = function() {
 
   });
   
-  exp.post('/iftt/v1/test/setup', ifttt-status);
+  exp.post('/ifttt/v1/test/setup', ifttt-status);
 
 
   //exp.post('/config/publish', config.publishPackage);
