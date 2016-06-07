@@ -97,8 +97,7 @@ app.expressInit = function() {
       } // 1 month
     )
   );
-  
-  exp.use('/ifttt/v1/status', ifttt-status)
+
   exp.use(express.compress());
   exp.use(bodyParser.json());
   exp.use(bodyParser.urlencoded({
@@ -177,7 +176,7 @@ app.expressInit = function() {
 
   });
   
-  exp.post('/iftt/v1/test/setup', ifttt-status);
+  exp.post('/iftt/v1/test/setup', ifttt.status);
 
 
   //exp.post('/config/publish', config.publishPackage);
